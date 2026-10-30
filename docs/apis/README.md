@@ -912,7 +912,7 @@ X-Content-Type-Options: nosniff
 **Every version of one package (v1 shape)**
 
 All versions of a package, newest first, as a list of legacy
-version objects (at most 1000 underlying rows).
+version objects (at most 1000 versions).
 
 Methods: `GET`, `HEAD`, `OPTIONS`
 

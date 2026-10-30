@@ -247,6 +247,9 @@ function baseQuery() {
     .innerJoin(commits, eq(commits.seq, variants.commitSeq));
 }
 
+/** A name lookup returns at most this many versions, each with all of its rows. */
+const NAME_VERSION_LIMIT = 1000;
+
 /**
  * Search by exact name or attribute path, returning every version.
  * Mirrors sqlNameSearch: ordered newest version first, then system.
@@ -257,10 +260,22 @@ export async function searchByName(q: SearchQuery): Promise<ResultPackage[]> {
   if (q.noPrerelease === true) conditions.push(eq(versions.prerelease, false));
   if (q.system !== undefined && q.system !== "") conditions.push(eq(variants.system, q.system));
 
+  // The cap counts versions, not rows: a row is a version x system x
+  // attr_path, so a row cap drops the oldest releases of a package with
+  // several attribute paths.
+  const newestVersions = sql`${variants.versionId} IN (
+    SELECT ${versions.id}
+    FROM ${variants}
+    JOIN ${versions} ON ${versions.id} = ${variants.versionId}
+    WHERE ${and(...conditions)}
+    GROUP BY ${versions.id}
+    ORDER BY ${versions.sortKey} DESC, ${versions.version}
+    LIMIT ${NAME_VERSION_LIMIT}
+  )`;
+
   const rows = await baseQuery()
-    .where(and(...conditions))
-    .orderBy(desc(versions.sortKey), asc(variants.system), asc(variants.attrPath))
-    .limit(1000);
+    .where(and(...conditions, newestVersions))
+    .orderBy(desc(versions.sortKey), asc(variants.system), asc(variants.attrPath));
   return rows as ResultPackage[];
 }
 
