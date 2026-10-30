@@ -247,7 +247,6 @@ function baseQuery() {
     .innerJoin(commits, eq(commits.seq, variants.commitSeq));
 }
 
-/** A name lookup returns at most this many versions, each with all of its rows. */
 const NAME_VERSION_LIMIT = 1000;
 
 /**
@@ -262,20 +261,28 @@ export async function searchByName(q: SearchQuery): Promise<ResultPackage[]> {
 
   // The cap counts versions, not rows: a row is a version x system x
   // attr_path, so a row cap drops the oldest releases of a package with
-  // several attribute paths.
-  const newestVersions = sql`${variants.versionId} IN (
-    SELECT ${versions.id}
-    FROM ${variants}
-    JOIN ${versions} ON ${versions.id} = ${variants.versionId}
-    WHERE ${and(...conditions)}
-    GROUP BY ${versions.id}
-    ORDER BY ${versions.sortKey} DESC, ${versions.version}
-    LIMIT ${NAME_VERSION_LIMIT}
+  // several attribute paths. versions.id breaks ties, and the outer ORDER BY
+  // keeps each version's rows together, which the renderers' grouping needs.
+  const newestVersions = sql`${variants.id} IN (
+    SELECT ranked.id FROM (
+      SELECT ${variants.id} AS id,
+        dense_rank() OVER (ORDER BY ${versions.sortKey} DESC, ${versions.version}, ${versions.id}) AS version_rank
+      FROM ${variants}
+      JOIN ${versions} ON ${versions.id} = ${variants.versionId}
+      WHERE ${and(...conditions)}
+    ) AS ranked
+    WHERE ranked.version_rank <= ${NAME_VERSION_LIMIT}
   )`;
 
   const rows = await baseQuery()
-    .where(and(...conditions, newestVersions))
-    .orderBy(desc(versions.sortKey), asc(variants.system), asc(variants.attrPath));
+    .where(newestVersions)
+    .orderBy(
+      desc(versions.sortKey),
+      asc(versions.version),
+      asc(versions.id),
+      asc(variants.system),
+      asc(variants.attrPath),
+    );
   return rows as ResultPackage[];
 }
 

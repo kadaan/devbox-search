@@ -172,16 +172,17 @@ order by ${LATEST_ORDER} limit 1`;
 /** searchByName: every version of a package (/v2/pkg, /v1/pkg). */
 const BY_NAME = `
 select ${RESULT_COLUMNS} from "variants" ${RESULT_JOINS}
-where (${TARGET} and "variants"."version_id" IN (
-  SELECT "versions"."id"
-  FROM "variants"
-  JOIN "versions" ON "versions"."id" = "variants"."version_id"
-  WHERE ${TARGET}
-  GROUP BY "versions"."id"
-  ORDER BY "versions"."sort_key" DESC, "versions"."version"
-  LIMIT 1000
-))
-order by "versions"."sort_key" desc, "variants"."system" asc, "variants"."attr_path" asc`;
+where "variants"."id" IN (
+  SELECT ranked.id FROM (
+    SELECT "variants"."id" AS id,
+      dense_rank() OVER (ORDER BY "versions"."sort_key" DESC, "versions"."version", "versions"."id") AS version_rank
+    FROM "variants"
+    JOIN "versions" ON "versions"."id" = "variants"."version_id"
+    WHERE ${TARGET}
+  ) AS ranked
+  WHERE ranked.version_rank <= 1000
+)
+order by "versions"."sort_key" desc, "versions"."version" asc, "versions"."id" asc, "variants"."system" asc, "variants"."attr_path" asc`;
 
 const connectionString = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
 if (!connectionString) {
