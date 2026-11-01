@@ -173,8 +173,7 @@ order by ${LATEST_ORDER} limit 1`;
 const BY_NAME = `
 select ${RESULT_COLUMNS} from "variants" ${RESULT_JOINS}
 where (${TARGET})
-order by "versions"."sort_key" desc, "variants"."system" asc, "variants"."attr_path" asc
-limit 1000`;
+order by "versions"."sort_key" desc, "versions"."version" asc, "versions"."id" asc, "variants"."system" asc, "variants"."attr_path" asc`;
 
 const connectionString = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
 if (!connectionString) {

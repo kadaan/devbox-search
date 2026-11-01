@@ -257,10 +257,17 @@ export async function searchByName(q: SearchQuery): Promise<ResultPackage[]> {
   if (q.noPrerelease === true) conditions.push(eq(versions.prerelease, false));
   if (q.system !== undefined && q.system !== "") conditions.push(eq(variants.system, q.system));
 
+  // versions.version and versions.id break sort_key ties so each version's rows
+  // stay together, which the renderers' consecutive grouping needs.
   const rows = await baseQuery()
     .where(and(...conditions))
-    .orderBy(desc(versions.sortKey), asc(variants.system), asc(variants.attrPath))
-    .limit(1000);
+    .orderBy(
+      desc(versions.sortKey),
+      asc(versions.version),
+      asc(versions.id),
+      asc(variants.system),
+      asc(variants.attrPath),
+    );
   return rows as ResultPackage[];
 }
 

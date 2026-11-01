@@ -140,4 +140,21 @@ describe("name lookups through the semi-join", () => {
     const rows = await search({ name: "hello", system: "x86_64-linux" });
     expect(rows.map((r) => r.system)).toEqual(["x86_64-linux"]);
   });
+
+  test("every version of a package with more rows than releases", async () => {
+    const releases = Array.from({ length: 130 }, (_, i) => `${130 - i}.0.0`);
+    await seedPackage(t.db, {
+      name: "nodejs",
+      versions: releases.flatMap((version) => [
+        { version, attrPath: "nodejs" },
+        { version, attrPath: "nodejs-slim" },
+      ]),
+    });
+
+    t.queries.length = 0;
+    const rows = await search({ name: "nodejs" });
+    expect(t.queries).toHaveLength(1);
+    expect(rows).toHaveLength(130 * 2 * 4);
+    expect([...new Set(rows.map((r) => r.version))]).toEqual(releases);
+  });
 });
