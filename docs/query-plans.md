@@ -1,10 +1,10 @@
 # Serving query plans
 
-Recorded 2026-09-25 against `ep-proud-sound-aue02y8j.c-10.us-east-1.aws.neon.tech` with `node tools/explain-plans.mjs`.
+Recorded 2026-11-01 against `ep-purple-river-auzjl04j.c-10.us-east-1.aws.neon.tech` with `node tools/explain-plans.mjs`.
 Regenerate after changing apps/web/lib/search.ts or the indexes, and diff.
 Warm plans (second run); see the script for what each statement is.
 
-Table sizes: packages=251024, versions=1470957, variants=3840412, search_terms=251614
+Table sizes: packages=253727, versions=1497814, variants=3909649, search_terms=254320
 
 ## What to look for
 
@@ -43,906 +43,899 @@ Table sizes: packages=251024, versions=1470957, variants=3840412, search_terms=2
 
 ### ranked terms — q=go
 
-Parameters: `["go","go"]` — Execution Time: 2.819 ms
+Parameters: `["go","go"]` — Execution Time: 2.506 ms
 
 ```
-Limit  (cost=1114.30..1114.42 rows=50 width=44) (actual time=1.674..1.687 rows=50 loops=1)
-  Buffers: shared hit=47
+Limit  (cost=2448.59..2448.71 rows=50 width=44) (actual time=1.679..1.692 rows=50 loops=1)
+  Buffers: shared hit=60
   CTE breadth
-    ->  Aggregate  (cost=17.67..17.68 rows=1 width=1) (actual time=0.268..0.268 rows=1 loops=1)
-          Buffers: shared hit=24
-          ->  Limit  (cost=0.42..17.36 rows=25 width=4) (actual time=0.036..0.238 rows=450 loops=1)
-                Buffers: shared hit=24
-                ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_1  (cost=0.42..17.36 rows=25 width=4) (actual time=0.035..0.202 rows=450 loops=1)
+    ->  Aggregate  (cost=18.08..18.09 rows=1 width=1) (actual time=0.272..0.272 rows=1 loops=1)
+          Buffers: shared hit=34
+          ->  Limit  (cost=0.42..17.77 rows=25 width=4) (actual time=0.027..0.242 rows=455 loops=1)
+                Buffers: shared hit=34
+                ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_1  (cost=0.42..17.77 rows=25 width=4) (actual time=0.027..0.205 rows=455 loops=1)
                       Index Cond: ((lower(name) >= 'go'::text) AND (lower(name) < 'gp'::text))
                       Filter: (lower(name) ~~ 'go%'::text)
-                      Buffers: shared hit=24
+                      Buffers: shared hit=34
   CTE prefix
-    ->  Limit  (cost=377.02..377.14 rows=50 width=39) (actual time=1.572..1.583 rows=50 loops=1)
-          Buffers: shared hit=47
-          ->  Sort  (cost=377.02..377.21 rows=78 width=39) (actual time=1.572..1.579 rows=50 loops=1)
+    ->  Limit  (cost=381.25..381.37 rows=50 width=39) (actual time=1.583..1.594 rows=50 loops=1)
+          Buffers: shared hit=60
+          ->  Sort  (cost=381.25..381.45 rows=79 width=39) (actual time=1.583..1.590 rows=50 loops=1)
                 Sort Key: (max((((CASE WHEN (lower(search_terms_3.name) = 'go'::text) THEN 1000 WHEN (lower(search_terms_3.attr_path) = 'go'::text) THEN 900 WHEN (lower(search_terms_3.name) ~~ 'go%'::text) THEN 800 WHEN (lower(search_terms_3.attr_path) ~~ 'go%'::text) THEN 700 ELSE 0 END)::double precision + ('100'::double precision * CASE WHEN (search_terms_3.name = search_terms_3.attr_path) THEN similarity(search_terms_3.name, 'go'::text) ELSE GREATEST(similarity(search_terms_3.name, 'go'::text), similarity(search_terms_3.attr_path, 'go'::text)) END)) + (CASE WHEN (search_terms_3.top_level_attr IS NOT NULL) THEN 25 ELSE 0 END)::double precision))) DESC, search_terms_3.name
                 Sort Method: top-N heapsort  Memory: 30kB
-                Buffers: shared hit=47
-                ->  GroupAggregate  (cost=369.49..374.56 rows=78 width=39) (actual time=0.643..1.492 rows=435 loops=1)
+                Buffers: shared hit=60
+                ->  GroupAggregate  (cost=373.62..378.76 rows=79 width=39) (actual time=0.647..1.503 rows=440 loops=1)
                       Group Key: search_terms_3.package_id, search_terms_3.name
-                      Buffers: shared hit=47
-                      ->  Sort  (cost=369.49..369.69 rows=78 width=69) (actual time=0.604..0.631 rows=450 loops=1)
+                      Buffers: shared hit=60
+                      ->  Sort  (cost=373.62..373.82 rows=79 width=68) (actual time=0.611..0.638 rows=455 loops=1)
                             Sort Key: search_terms_3.package_id, search_terms_3.name
                             Sort Method: quicksort  Memory: 51kB
-                            Buffers: shared hit=47
-                            ->  Append  (cost=9.66..367.04 rows=78 width=69) (actual time=0.326..0.528 rows=450 loops=1)
-                                  Buffers: shared hit=47
-                                  ->  Result  (cost=9.66..281.95 rows=50 width=69) (actual time=0.325..0.479 rows=450 loops=1)
+                            Buffers: shared hit=60
+                            ->  Append  (cost=9.68..371.13 rows=79 width=68) (actual time=0.324..0.532 rows=455 loops=1)
+                                  Buffers: shared hit=60
+                                  ->  Result  (cost=9.68..285.41 rows=51 width=68) (actual time=0.324..0.482 rows=455 loops=1)
                                         One-Time Filter: (NOT (InitPlan 2).col1)
-                                        Buffers: shared hit=47
+                                        Buffers: shared hit=60
                                         InitPlan 2
-                                          ->  CTE Scan on breadth  (cost=0.00..0.02 rows=1 width=1) (actual time=0.269..0.269 rows=1 loops=1)
-                                                Buffers: shared hit=24
-                                        ->  Bitmap Heap Scan on search_terms search_terms_3  (cost=9.66..281.95 rows=50 width=69) (actual time=0.054..0.159 rows=450 loops=1)
+                                          ->  CTE Scan on breadth  (cost=0.00..0.02 rows=1 width=1) (actual time=0.273..0.273 rows=1 loops=1)
+                                                Buffers: shared hit=34
+                                        ->  Bitmap Heap Scan on search_terms search_terms_3  (cost=9.68..285.41 rows=51 width=68) (actual time=0.048..0.156 rows=455 loops=1)
                                               Recheck Cond: ((lower(name) ~~ 'go%'::text) OR (lower(attr_path) ~~ 'go%'::text))
                                               Filter: ((lower(name) ~~ 'go%'::text) OR (lower(attr_path) ~~ 'go%'::text))
-                                              Heap Blocks: exact=13
-                                              Buffers: shared hit=23
-                                              ->  BitmapOr  (cost=9.64..9.64 rows=77 width=0) (actual time=0.046..0.047 rows=0 loops=1)
+                                              Heap Blocks: exact=16
+                                              Buffers: shared hit=26
+                                              ->  BitmapOr  (cost=9.66..9.66 rows=79 width=0) (actual time=0.041..0.041 rows=0 loops=1)
                                                     Buffers: shared hit=10
-                                                    ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..4.81 rows=39 width=0) (actual time=0.024..0.024 rows=450 loops=1)
+                                                    ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..4.81 rows=39 width=0) (actual time=0.020..0.020 rows=455 loops=1)
                                                           Index Cond: ((lower(name) >= 'go'::text) AND (lower(name) < 'gp'::text))
                                                           Buffers: shared hit=5
-                                                    ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.81 rows=39 width=0) (actual time=0.021..0.021 rows=450 loops=1)
+                                                    ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.82 rows=40 width=0) (actual time=0.020..0.020 rows=455 loops=1)
                                                           Index Cond: ((lower(attr_path) >= 'go'::text) AND (lower(attr_path) < 'gp'::text))
                                                           Buffers: shared hit=5
-                                  ->  Result  (cost=8.88..16.76 rows=2 width=69) (actual time=0.002..0.003 rows=0 loops=1)
+                                  ->  Result  (cost=8.88..16.76 rows=2 width=68) (actual time=0.002..0.003 rows=0 loops=1)
                                         One-Time Filter: (InitPlan 3).col1
                                         InitPlan 3
                                           ->  CTE Scan on breadth breadth_1  (cost=0.00..0.02 rows=1 width=1) (actual time=0.001..0.001 rows=1 loops=1)
-                                        ->  Bitmap Heap Scan on search_terms search_terms_4  (cost=8.88..16.76 rows=2 width=69) (never executed)
+                                        ->  Bitmap Heap Scan on search_terms search_terms_4  (cost=8.88..16.76 rows=2 width=68) (never executed)
                                               Recheck Cond: ((lower(name) = 'go'::text) OR (lower(attr_path) = 'go'::text))
                                               ->  BitmapOr  (cost=8.86..8.86 rows=2 width=0) (never executed)
                                                     ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..4.43 rows=1 width=0) (never executed)
                                                           Index Cond: (lower(name) = 'go'::text)
                                                     ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.43 rows=1 width=0) (never executed)
                                                           Index Cond: (lower(attr_path) = 'go'::text)
-                                  ->  Result  (cost=29.40..33.42 rows=1 width=69) (actual time=0.001..0.002 rows=0 loops=1)
+                                  ->  Result  (cost=29.62..33.64 rows=1 width=68) (actual time=0.001..0.002 rows=0 loops=1)
                                         One-Time Filter: (InitPlan 4).col1
                                         InitPlan 4
                                           ->  CTE Scan on breadth breadth_2  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.000 rows=1 loops=1)
-                                        ->  Bitmap Heap Scan on search_terms search_terms_5  (cost=29.40..33.42 rows=1 width=69) (never executed)
+                                        ->  Bitmap Heap Scan on search_terms search_terms_5  (cost=29.62..33.64 rows=1 width=68) (never executed)
                                               Recheck Cond: (((lower(name) ~~ 'go%'::text) OR (lower(attr_path) ~~ 'go%'::text)) AND ((name = attr_path) IS FALSE))
                                               Filter: ((lower(name) ~~ 'go%'::text) OR (lower(attr_path) ~~ 'go%'::text))
-                                              ->  BitmapAnd  (cost=29.38..29.38 rows=1 width=0) (never executed)
-                                                    ->  BitmapOr  (cost=9.62..9.62 rows=77 width=0) (never executed)
+                                              ->  BitmapAnd  (cost=29.60..29.60 rows=1 width=0) (never executed)
+                                                    ->  BitmapOr  (cost=9.63..9.63 rows=79 width=0) (never executed)
                                                           ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..4.81 rows=39 width=0) (never executed)
                                                                 Index Cond: ((lower(name) >= 'go'::text) AND (lower(name) < 'gp'::text))
-                                                          ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.81 rows=39 width=0) (never executed)
+                                                          ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.82 rows=40 width=0) (never executed)
                                                                 Index Cond: ((lower(attr_path) >= 'go'::text) AND (lower(attr_path) < 'gp'::text))
-                                                    ->  Bitmap Index Scan on search_terms_alias_idx  (cost=0.00..19.50 rows=646 width=0) (never executed)
-                                  ->  Subquery Scan on "*SELECT* 4"  (cost=16.13..16.17 rows=3 width=69) (actual time=0.005..0.006 rows=0 loops=1)
-                                        ->  Limit  (cost=16.13..16.14 rows=3 width=73) (actual time=0.004..0.005 rows=0 loops=1)
+                                                    ->  Bitmap Index Scan on search_terms_alias_idx  (cost=0.00..19.71 rows=693 width=0) (never executed)
+                                  ->  Subquery Scan on "*SELECT* 4"  (cost=16.13..16.17 rows=3 width=68) (actual time=0.004..0.005 rows=0 loops=1)
+                                        ->  Limit  (cost=16.13..16.14 rows=3 width=72) (actual time=0.004..0.005 rows=0 loops=1)
                                               InitPlan 5
                                                 ->  CTE Scan on breadth breadth_3  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.000 rows=1 loops=1)
-                                              ->  Sort  (cost=16.11..16.12 rows=3 width=73) (actual time=0.004..0.005 rows=0 loops=1)
+                                              ->  Sort  (cost=16.11..16.12 rows=3 width=72) (actual time=0.004..0.004 rows=0 loops=1)
                                                     Sort Key: ((lower(search_terms_6.name) <-> 'go'::text)), search_terms_6.name
                                                     Sort Method: quicksort  Memory: 25kB
-                                                    ->  Result  (cost=4.31..16.09 rows=3 width=73) (actual time=0.001..0.001 rows=0 loops=1)
+                                                    ->  Result  (cost=4.31..16.09 rows=3 width=72) (actual time=0.001..0.001 rows=0 loops=1)
                                                           One-Time Filter: (InitPlan 5).col1
-                                                          ->  Bitmap Heap Scan on search_terms search_terms_6  (cost=4.31..16.07 rows=3 width=69) (never executed)
+                                                          ->  Bitmap Heap Scan on search_terms search_terms_6  (cost=4.31..16.08 rows=3 width=68) (never executed)
                                                                 Recheck Cond: ((lower(name) ~~ 'go%'::text) AND ((name = attr_path) IS TRUE) AND (top_level_attr IS NOT NULL))
                                                                 ->  Bitmap Index Scan on search_terms_top_level_name_knn_idx  (cost=0.00..4.31 rows=3 width=0) (never executed)
                                                                       Index Cond: (lower(name) ~~ 'go%'::text)
-                                  ->  Subquery Scan on "*SELECT* 5"  (cost=18.07..18.35 rows=22 width=69) (actual time=0.003..0.004 rows=0 loops=1)
-                                        ->  Limit  (cost=18.07..18.13 rows=22 width=73) (actual time=0.003..0.003 rows=0 loops=1)
+                                  ->  Subquery Scan on "*SELECT* 5"  (cost=18.48..18.76 rows=22 width=68) (actual time=0.004..0.004 rows=0 loops=1)
+                                        ->  Limit  (cost=18.48..18.54 rows=22 width=72) (actual time=0.003..0.004 rows=0 loops=1)
                                               InitPlan 6
                                                 ->  CTE Scan on breadth breadth_4  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.000 rows=1 loops=1)
-                                              ->  Sort  (cost=18.05..18.11 rows=22 width=73) (actual time=0.003..0.003 rows=0 loops=1)
+                                              ->  Sort  (cost=18.46..18.52 rows=22 width=72) (actual time=0.003..0.004 rows=0 loops=1)
                                                     Sort Key: ((lower(search_terms_7.name) <-> 'go'::text)), search_terms_7.name
                                                     Sort Method: quicksort  Memory: 25kB
-                                                    ->  Result  (cost=0.42..17.56 rows=22 width=73) (actual time=0.001..0.001 rows=0 loops=1)
+                                                    ->  Result  (cost=0.42..17.97 rows=22 width=72) (actual time=0.001..0.001 rows=0 loops=1)
                                                           One-Time Filter: (InitPlan 6).col1
-                                                          ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_7  (cost=0.42..17.45 rows=22 width=69) (never executed)
+                                                          ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_7  (cost=0.42..17.86 rows=22 width=68) (never executed)
                                                                 Index Cond: ((lower(name) >= 'go'::text) AND (lower(name) < 'gp'::text))
                                                                 Filter: ((top_level_attr IS NULL) AND ((name = attr_path) IS TRUE) AND (lower(name) ~~ 'go%'::text))
-  ->  Sort  (cost=719.48..719.73 rows=100 width=44) (actual time=1.673..1.677 rows=50 loops=1)
+  ->  Sort  (cost=2049.12..2049.37 rows=100 width=44) (actual time=1.678..1.682 rows=50 loops=1)
         Sort Key: (max(prefix.rank)) DESC, (min(prefix.name))
         Sort Method: quicksort  Memory: 28kB
-        Buffers: shared hit=47
-        ->  GroupAggregate  (cost=714.16..716.16 rows=100 width=44) (actual time=1.631..1.651 rows=50 loops=1)
+        Buffers: shared hit=60
+        ->  GroupAggregate  (cost=2043.80..2045.80 rows=100 width=44) (actual time=1.639..1.660 rows=50 loops=1)
               Group Key: prefix.package_id
-              Buffers: shared hit=47
-              ->  Sort  (cost=714.16..714.41 rows=100 width=42) (actual time=1.628..1.632 rows=50 loops=1)
+              Buffers: shared hit=60
+              ->  Sort  (cost=2043.80..2044.05 rows=100 width=42) (actual time=1.637..1.641 rows=50 loops=1)
                     Sort Key: prefix.package_id
                     Sort Method: quicksort  Memory: 27kB
-                    Buffers: shared hit=47
-                    ->  Append  (cost=0.00..710.83 rows=100 width=42) (actual time=1.574..1.613 rows=50 loops=1)
-                          Buffers: shared hit=47
-                          ->  CTE Scan on prefix  (cost=0.00..1.00 rows=50 width=44) (actual time=1.574..1.589 rows=50 loops=1)
-                                Buffers: shared hit=47
-                          ->  Subquery Scan on fuzzy  (cost=708.71..709.33 rows=50 width=39) (actual time=0.018..0.019 rows=0 loops=1)
-                                ->  Limit  (cost=708.71..708.83 rows=50 width=39) (actual time=0.018..0.019 rows=0 loops=1)
+                    Buffers: shared hit=60
+                    ->  Append  (cost=0.00..2040.48 rows=100 width=42) (actual time=1.585..1.624 rows=50 loops=1)
+                          Buffers: shared hit=60
+                          ->  CTE Scan on prefix  (cost=0.00..1.00 rows=50 width=44) (actual time=1.585..1.600 rows=50 loops=1)
+                                Buffers: shared hit=60
+                          ->  Subquery Scan on fuzzy  (cost=2038.36..2038.98 rows=50 width=39) (actual time=0.019..0.020 rows=0 loops=1)
+                                ->  Limit  (cost=2038.36..2038.48 rows=50 width=39) (actual time=0.019..0.020 rows=0 loops=1)
                                       InitPlan 8
-                                        ->  Aggregate  (cost=1.12..1.14 rows=1 width=8) (actual time=0.008..0.008 rows=1 loops=1)
+                                        ->  Aggregate  (cost=1.12..1.14 rows=1 width=8) (actual time=0.007..0.007 rows=1 loops=1)
                                               ->  CTE Scan on prefix prefix_1  (cost=0.00..1.00 rows=50 width=0) (actual time=0.000..0.003 rows=50 loops=1)
-                                      ->  Sort  (cost=707.57..707.70 rows=50 width=39) (actual time=0.017..0.018 rows=0 loops=1)
+                                      ->  Sort  (cost=2037.22..2037.35 rows=51 width=39) (actual time=0.018..0.019 rows=0 loops=1)
                                             Sort Key: (max((((CASE WHEN (lower(search_terms.name) = 'go'::text) THEN 1000 WHEN (lower(search_terms.attr_path) = 'go'::text) THEN 900 WHEN (lower(search_terms.name) ~~ 'go%'::text) THEN 800 WHEN (lower(search_terms.attr_path) ~~ 'go%'::text) THEN 700 ELSE 0 END)::double precision + ('100'::double precision * CASE WHEN (search_terms.name = search_terms.attr_path) THEN similarity(search_terms.name, 'go'::text) ELSE GREATEST(similarity(search_terms.name, 'go'::text), similarity(search_terms.attr_path, 'go'::text)) END)) + (CASE WHEN (search_terms.top_level_attr IS NOT NULL) THEN 25 ELSE 0 END)::double precision))) DESC, search_terms.name
                                             Sort Method: quicksort  Memory: 25kB
-                                            ->  GroupAggregate  (cost=702.91..706.16 rows=50 width=39) (actual time=0.015..0.015 rows=0 loops=1)
+                                            ->  GroupAggregate  (cost=2032.46..2035.77 rows=51 width=39) (actual time=0.015..0.015 rows=0 loops=1)
                                                   Group Key: search_terms.package_id, search_terms.name
-                                                  ->  Sort  (cost=702.91..703.04 rows=50 width=69) (actual time=0.014..0.015 rows=0 loops=1)
+                                                  ->  Sort  (cost=2032.46..2032.59 rows=51 width=68) (actual time=0.014..0.015 rows=0 loops=1)
                                                         Sort Key: search_terms.package_id, search_terms.name
                                                         Sort Method: quicksort  Memory: 25kB
-                                                        ->  Result  (cost=519.74..701.50 rows=50 width=69) (actual time=0.009..0.009 rows=0 loops=1)
+                                                        ->  Result  (cost=1845.75..2031.01 rows=51 width=68) (actual time=0.008..0.008 rows=0 loops=1)
                                                               One-Time Filter: ((InitPlan 8).col1 < 50)
-                                                              ->  Bitmap Heap Scan on search_terms  (cost=519.74..701.50 rows=50 width=69) (never executed)
+                                                              ->  Bitmap Heap Scan on search_terms  (cost=1845.75..2031.01 rows=51 width=68) (never executed)
                                                                     Recheck Cond: ((name % 'go'::text) OR (attr_path % 'go'::text))
                                                                     Filter: ((lower(name) !~~ 'go%'::text) AND (lower(attr_path) !~~ 'go%'::text))
-                                                                    ->  BitmapOr  (cost=519.74..519.74 rows=50 width=0) (never executed)
-                                                                          ->  Bitmap Index Scan on search_terms_name_trgm_idx  (cost=0.00..259.86 rows=25 width=0) (never executed)
+                                                                    ->  BitmapOr  (cost=1845.74..1845.74 rows=51 width=0) (never executed)
+                                                                          ->  Bitmap Index Scan on search_terms_name_trgm_idx  (cost=0.00..922.86 rows=25 width=0) (never executed)
                                                                                 Index Cond: (name % 'go'::text)
-                                                                          ->  Bitmap Index Scan on search_terms_attr_path_trgm_idx  (cost=0.00..259.86 rows=25 width=0) (never executed)
+                                                                          ->  Bitmap Index Scan on search_terms_attr_path_trgm_idx  (cost=0.00..922.86 rows=25 width=0) (never executed)
                                                                                 Index Cond: (attr_path % 'go'::text)
 Planning:
   Buffers: shared hit=4
-Planning Time: 1.358 ms
-Execution Time: 2.819 ms
+Planning Time: 1.349 ms
+Execution Time: 2.506 ms
 ```
 
 ### batched fetch, latest — q=go (50 hits)
 
-Parameters: `["35171,35225,35172,35184,35203,35208,35209,35233,35234,35238,35241,35252,35263,35409,35430,35547,35585,35589,35177,35178,35183,35191,35196,272526,35201,35202,35206,35210,35240,35245,35248,35250,35174,35185,35213,35231,35251,35260,35261,35266,35273,35299,35304,35376,35378,35384,35390,35392,35400,35401"]` — Execution Time: 12.881 ms
+Parameters: `["35171,35225,35172,35184,35203,35208,35209,35233,35234,35238,35241,35252,35263,35409,35430,35547,35585,35589,35177,35178,35183,35191,35196,272526,35201,35202,35206,35210,35240,35245,35248,35250,35174,35185,35213,35231,35251,35260,35261,35266,35273,35299,35304,35376,35378,35384,35390,35392,35400,35401"]` — Execution Time: 14.875 ms
 
 ```
-Limit  (cost=4130.51..104793.00 rows=50 width=1377) (actual time=4.705..12.772 rows=50 loops=1)
-  Buffers: shared hit=22850
-  ->  Unique  (cost=4130.51..104793.00 rows=50 width=1377) (actual time=4.704..12.766 rows=50 loops=1)
-        Buffers: shared hit=22850
-        ->  Incremental Sort  (cost=4130.51..104791.32 rows=672 width=1377) (actual time=4.703..12.729 rows=172 loops=1)
+Limit  (cost=4241.35..107618.59 rows=50 width=1378) (actual time=6.270..14.764 rows=50 loops=1)
+  Buffers: shared hit=23414
+  ->  Unique  (cost=4241.35..107618.59 rows=50 width=1378) (actual time=6.269..14.758 rows=50 loops=1)
+        Buffers: shared hit=23414
+        ->  Incremental Sort  (cost=4241.35..107616.83 rows=706 width=1378) (actual time=6.268..14.720 rows=171 loops=1)
               Sort Key: hits.ord, variants.system, variants.attr_path
               Presorted Key: hits.ord
               Full-sort Groups: 6  Sort Method: quicksort  Average Memory: 55kB  Peak Memory: 55kB
-              Buffers: shared hit=22850
-              ->  Nested Loop  (cost=2076.40..104769.33 rows=672 width=1377) (actual time=3.349..12.582 rows=175 loops=1)
-                    Buffers: shared hit=22850
-                    ->  Function Scan on unnest hits  (cost=0.00..0.50 rows=50 width=12) (actual time=0.008..0.015 rows=50 loops=1)
-                    ->  Nested Loop  (cost=2076.40..2095.25 rows=13 width=1359) (actual time=0.241..0.251 rows=4 loops=50)
-                          Buffers: shared hit=22850
-                          ->  Nested Loop  (cost=2076.12..2091.38 rows=13 width=1314) (actual time=0.239..0.246 rows=4 loops=50)
-                                Buffers: shared hit=22325
-                                ->  Nested Loop  (cost=2075.69..2084.76 rows=13 width=331) (actual time=0.236..0.238 rows=4 loops=50)
-                                      Join Filter: (variants.version_id = versions_1.id)
-                                      Buffers: shared hit=21625
-                                      ->  Nested Loop  (cost=2075.26..2083.32 rows=1 width=45) (actual time=0.234..0.234 rows=1 loops=50)
-                                            Buffers: shared hit=21336
-                                            ->  Nested Loop  (cost=2074.84..2082.87 rows=1 width=22) (actual time=0.232..0.232 rows=1 loops=50)
-                                                  Buffers: shared hit=21136
-                                                  ->  Limit  (cost=2074.42..2074.42 rows=1 width=24) (actual time=0.229..0.229 rows=1 loops=50)
-                                                        Buffers: shared hit=20936
-                                                        ->  Sort  (cost=2074.42..2074.63 rows=85 width=24) (actual time=0.229..0.229 rows=1 loops=50)
+              Buffers: shared hit=23414
+              ->  Nested Loop  (cost=2131.84..107593.52 rows=706 width=1378) (actual time=4.910..14.570 rows=174 loops=1)
+                    Buffers: shared hit=23414
+                    ->  Nested Loop  (cost=2131.56..107383.45 rows=706 width=1323) (actual time=4.904..14.325 rows=174 loops=1)
+                          Buffers: shared hit=22892
+                          ->  Nested Loop  (cost=2131.14..107018.11 rows=706 width=340) (actual time=4.896..13.970 rows=174 loops=1)
+                                Join Filter: (variants.version_id = versions_1.id)
+                                Buffers: shared hit=22196
+                                ->  Nested Loop  (cost=2130.71..106939.17 rows=50 width=53) (actual time=4.889..13.767 rows=50 loops=1)
+                                      Buffers: shared hit=21890
+                                      ->  Nested Loop  (cost=2130.29..106916.94 rows=50 width=30) (actual time=4.881..13.660 rows=50 loops=1)
+                                            Buffers: shared hit=21690
+                                            ->  Nested Loop  (cost=2129.86..106494.69 rows=50 width=12) (actual time=4.872..13.521 rows=50 loops=1)
+                                                  Buffers: shared hit=21490
+                                                  ->  Function Scan on unnest hits  (cost=0.00..0.50 rows=50 width=12) (actual time=0.008..0.015 rows=50 loops=1)
+                                                  ->  Limit  (cost=2129.86..2129.86 rows=1 width=24) (actual time=0.270..0.270 rows=1 loops=50)
+                                                        Buffers: shared hit=21490
+                                                        ->  Sort  (cost=2129.86..2130.06 rows=79 width=24) (actual time=0.269..0.269 rows=1 loops=50)
                                                               Sort Key: (EXISTS(SubPlan 1)) DESC, ((SubPlan 2)) DESC, versions_1.sort_key DESC
                                                               Sort Method: top-N heapsort  Memory: 25kB
-                                                              Buffers: shared hit=20936
-                                                              ->  Nested Loop  (cost=0.86..2073.99 rows=85 width=24) (actual time=0.013..0.219 rows=45 loops=50)
-                                                                    Buffers: shared hit=20936
-                                                                    ->  Index Scan using versions_semver_idx on versions versions_1  (cost=0.43..66.18 rows=32 width=19) (actual time=0.003..0.007 rows=12 loops=50)
-                                                                          Index Cond: (package_id = hits.package_id)
-                                                                          Filter: (NOT prerelease)
-                                                                          Rows Removed by Filter: 0
-                                                                          Buffers: shared hit=240
-                                                                    ->  Index Scan using variants_identity_key on variants variants_1  (cost=0.43..32.45 rows=13 width=8) (actual time=0.002..0.003 rows=4 loops=614)
+                                                              Buffers: shared hit=21490
+                                                              ->  Nested Loop  (cost=0.86..2129.47 rows=79 width=24) (actual time=0.013..0.260 rows=46 loops=50)
+                                                                    Buffers: shared hit=21490
+                                                                    ->  Index Scan using versions_latest_idx on versions versions_1  (cost=0.43..66.26 rows=32 width=19) (actual time=0.003..0.007 rows=13 loops=50)
+                                                                          Index Cond: ((package_id = hits.package_id) AND (prerelease = false))
+                                                                          Buffers: shared hit=250
+                                                                    ->  Index Scan using variants_identity_key on variants variants_1  (cost=0.43..36.09 rows=14 width=8) (actual time=0.002..0.003 rows=4 loops=629)
                                                                           Index Cond: (version_id = versions_1.id)
-                                                                          Buffers: shared hit=2707
+                                                                          Buffers: shared hit=2815
                                                                     SubPlan 1
-                                                                      ->  Index Scan using variants_identity_key on variants b  (cost=0.43..32.45 rows=13 width=0) (actual time=0.001..0.001 rows=1 loops=2232)
+                                                                      ->  Index Scan using variants_identity_key on variants b  (cost=0.43..36.09 rows=14 width=0) (actual time=0.001..0.001 rows=1 loops=2286)
                                                                             Index Cond: (version_id = versions_1.id)
                                                                             Filter: (NOT broken)
-                                                                            Buffers: shared hit=8928
+                                                                            Buffers: shared hit=9144
                                                                     SubPlan 2
-                                                                      ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=2232)
-                                                                            Buffers: shared hit=9061
-                                                                            ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=2232)
+                                                                      ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.003..0.003 rows=1 loops=2286)
+                                                                            Buffers: shared hit=9281
+                                                                            ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=2286)
                                                                                   Index Cond: (variant_id = variants_1.id)
                                                                                   Filter: (NOT seeded)
                                                                                   Rows Removed by Filter: 1
-                                                                                  Buffers: shared hit=9061
-                                                  ->  Index Scan using versions_pkey on versions  (cost=0.43..8.45 rows=1 width=18) (actual time=0.002..0.002 rows=1 loops=50)
-                                                        Index Cond: (id = versions_1.id)
-                                                        Buffers: shared hit=200
-                                            ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.002..0.002 rows=1 loops=50)
-                                                  Index Cond: (id = versions.package_id)
+                                                                                  Buffers: shared hit=9281
+                                            ->  Index Scan using versions_pkey on versions  (cost=0.43..8.45 rows=1 width=18) (actual time=0.002..0.002 rows=1 loops=50)
+                                                  Index Cond: (id = versions_1.id)
                                                   Buffers: shared hit=200
-                                      ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.28 rows=13 width=298) (actual time=0.002..0.003 rows=4 loops=50)
-                                            Index Cond: (version_id = versions.id)
-                                            Buffers: shared hit=289
-                                ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (actual time=0.002..0.002 rows=1 loops=175)
-                                      Index Cond: (id = variants.meta_id)
-                                      Buffers: shared hit=700
-                          ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=175)
-                                Index Cond: (seq = variants.commit_seq)
-                                Buffers: shared hit=525
+                                      ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.002..0.002 rows=1 loops=50)
+                                            Index Cond: (id = versions.package_id)
+                                            Buffers: shared hit=200
+                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.40 rows=14 width=299) (actual time=0.002..0.003 rows=3 loops=50)
+                                      Index Cond: (version_id = versions.id)
+                                      Buffers: shared hit=306
+                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (actual time=0.002..0.002 rows=1 loops=174)
+                                Index Cond: (id = variants.meta_id)
+                                Buffers: shared hit=696
+                    ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=174)
+                          Index Cond: (seq = variants.commit_seq)
+                          Buffers: shared hit=522
 Planning:
-  Buffers: shared hit=112
-Planning Time: 20.427 ms
-Execution Time: 12.881 ms
+  Buffers: shared hit=115
+Planning Time: 33.238 ms
+Execution Time: 14.875 ms
 ```
 
 ### batched fetch, all versions — q=go (50 hits)
 
-Parameters: `["35171,35225,35172,35184,35203,35208,35209,35233,35234,35238,35241,35252,35263,35409,35430,35547,35585,35589,35177,35178,35183,35191,35196,272526,35201,35202,35206,35210,35240,35245,35248,35250,35174,35185,35213,35231,35251,35260,35261,35266,35273,35299,35304,35376,35378,35384,35390,35392,35400,35401"]` — Execution Time: 13.480 ms
+Parameters: `["35171,35225,35172,35184,35203,35208,35209,35233,35234,35238,35241,35252,35263,35409,35430,35547,35585,35589,35177,35178,35183,35191,35196,272526,35201,35202,35206,35210,35240,35245,35248,35250,35174,35185,35213,35231,35251,35260,35261,35266,35273,35299,35304,35376,35378,35384,35390,35392,35400,35401"]` — Execution Time: 12.561 ms
 
 ```
-Limit  (cost=116.51..1458.29 rows=1000 width=1392) (actual time=4.185..13.286 rows=634 loops=1)
-  Buffers: shared hit=13178
-  ->  Unique  (cost=116.51..5813.71 rows=4246 width=1392) (actual time=4.184..13.233 rows=634 loops=1)
-        Buffers: shared hit=13178
-        ->  Incremental Sort  (cost=116.51..5781.86 rows=4246 width=1392) (actual time=4.183..12.707 rows=2307 loops=1)
+Limit  (cost=119.91..1568.91 rows=1000 width=1393) (actual time=3.529..12.364 rows=649 loops=1)
+  Buffers: shared hit=13537
+  ->  Unique  (cost=119.91..5979.69 rows=4044 width=1393) (actual time=3.527..12.311 rows=649 loops=1)
+        Buffers: shared hit=13537
+        ->  Incremental Sort  (cost=119.91..5949.36 rows=4044 width=1393) (actual time=3.527..11.773 rows=2361 loops=1)
               Sort Key: hits.ord, versions.sort_key DESC, versions.version, variants.system, variants.attr_path
               Presorted Key: hits.ord
               Full-sort Groups: 21  Sort Method: quicksort  Average Memory: 70kB  Peak Memory: 75kB
-              Pre-sorted Groups: 26  Sort Method: quicksort  Average Memory: 561kB  Peak Memory: 561kB
-              Buffers: shared hit=13178
-              ->  Nested Loop  (cost=1.99..5591.75 rows=4246 width=1392) (actual time=0.053..8.665 rows=2307 loops=1)
-                    Buffers: shared hit=13178
-                    ->  Nested Loop  (cost=1.70..4929.67 rows=4246 width=1337) (actual time=0.045..7.202 rows=2307 loops=1)
-                          Buffers: shared hit=12470
-                          ->  Nested Loop  (cost=1.28..2768.89 rows=4246 width=354) (actual time=0.039..3.320 rows=2307 loops=1)
-                                Buffers: shared hit=3242
-                                ->  Nested Loop  (cost=0.85..506.15 rows=1603 width=64) (actual time=0.032..0.621 rows=634 loops=1)
+              Pre-sorted Groups: 27  Sort Method: quicksort  Average Memory: 581kB  Peak Memory: 581kB
+              Buffers: shared hit=13537
+              ->  Nested Loop  (cost=1.99..5769.66 rows=4044 width=1393) (actual time=0.052..8.236 rows=2361 loops=1)
+                    Buffers: shared hit=13537
+                    ->  Nested Loop  (cost=1.70..5121.54 rows=4044 width=1338) (actual time=0.044..6.803 rows=2361 loops=1)
+                          Buffers: shared hit=12811
+                          ->  Nested Loop  (cost=1.28..3028.84 rows=4044 width=355) (actual time=0.038..3.169 rows=2361 loops=1)
+                                Buffers: shared hit=3367
+                                ->  Nested Loop  (cost=0.85..507.87 rows=1633 width=64) (actual time=0.031..0.574 rows=649 loops=1)
                                       Join Filter: (versions.package_id = hits.package_id)
-                                      Buffers: shared hit=440
-                                      ->  Nested Loop  (cost=0.42..418.38 rows=50 width=43) (actual time=0.020..0.133 rows=50 loops=1)
+                                      Buffers: shared hit=457
+                                      ->  Nested Loop  (cost=0.42..418.38 rows=50 width=43) (actual time=0.019..0.124 rows=50 loops=1)
                                             Buffers: shared hit=200
-                                            ->  Function Scan on unnest hits  (cost=0.00..0.50 rows=50 width=12) (actual time=0.007..0.014 rows=50 loops=1)
+                                            ->  Function Scan on unnest hits  (cost=0.00..0.50 rows=50 width=12) (actual time=0.008..0.015 rows=50 loops=1)
                                             ->  Index Scan using packages_pkey on packages  (cost=0.42..8.36 rows=1 width=31) (actual time=0.002..0.002 rows=1 loops=50)
                                                   Index Cond: (id = hits.package_id)
                                                   Buffers: shared hit=200
-                                      ->  Index Scan using versions_package_version_key on versions  (cost=0.43..1.36 rows=32 width=33) (actual time=0.003..0.006 rows=13 loops=50)
+                                      ->  Index Scan using versions_package_version_key on versions  (cost=0.43..1.38 rows=33 width=33) (actual time=0.003..0.007 rows=13 loops=50)
                                             Index Cond: (package_id = packages.id)
-                                            Buffers: shared hit=240
-                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.28 rows=13 width=298) (actual time=0.002..0.003 rows=4 loops=634)
+                                            Buffers: shared hit=257
+                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.40 rows=14 width=299) (actual time=0.002..0.003 rows=4 loops=649)
                                       Index Cond: (version_id = versions.id)
-                                      Buffers: shared hit=2802
-                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=2307)
+                                      Buffers: shared hit=2910
+                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=2361)
                                 Index Cond: (id = variants.meta_id)
-                                Buffers: shared hit=9228
-                    ->  Memoize  (cost=0.29..0.31 rows=1 width=53) (actual time=0.000..0.000 rows=1 loops=2307)
+                                Buffers: shared hit=9444
+                    ->  Memoize  (cost=0.29..0.31 rows=1 width=53) (actual time=0.000..0.000 rows=1 loops=2361)
                           Cache Key: variants.commit_seq
                           Cache Mode: logical
-                          Hits: 2071  Misses: 236  Evictions: 0  Overflows: 0  Memory Usage: 37kB
-                          Buffers: shared hit=708
-                          ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.002..0.002 rows=1 loops=236)
+                          Hits: 2119  Misses: 242  Evictions: 0  Overflows: 0  Memory Usage: 38kB
+                          Buffers: shared hit=726
+                          ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=242)
                                 Index Cond: (seq = variants.commit_seq)
-                                Buffers: shared hit=708
+                                Buffers: shared hit=726
 Planning:
-  Buffers: shared hit=68
-Planning Time: 10.128 ms
-Execution Time: 13.480 ms
+  Buffers: shared hit=69
+Planning Time: 10.386 ms
+Execution Time: 12.561 ms
 ```
 
 ### ranked terms — q=python
 
-Parameters: `["python","python"]` — Execution Time: 39.353 ms
+Parameters: `["python","python"]` — Execution Time: 36.537 ms
 
 ```
-Limit  (cost=17553.70..17553.83 rows=50 width=44) (actual time=39.134..39.156 rows=50 loops=1)
-  Buffers: shared hit=3551
+Limit  (cost=22077.05..22077.18 rows=50 width=44) (actual time=36.303..36.325 rows=50 loops=1)
+  Buffers: shared hit=3692
   CTE breadth
-    ->  Aggregate  (cost=783.03..783.05 rows=1 width=1) (actual time=5.398..5.399 rows=1 loops=1)
-          Buffers: shared hit=396
-          ->  Limit  (cost=0.42..658.03 rows=10000 width=4) (actual time=0.021..4.794 rows=10000 loops=1)
-                Buffers: shared hit=396
-                ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_1  (cost=0.42..4846.04 rows=73685 width=4) (actual time=0.020..3.941 rows=10000 loops=1)
+    ->  Aggregate  (cost=789.01..789.02 rows=1 width=1) (actual time=5.548..5.549 rows=1 loops=1)
+          Buffers: shared hit=398
+          ->  Limit  (cost=0.42..664.01 rows=10000 width=4) (actual time=0.026..4.921 rows=10000 loops=1)
+                Buffers: shared hit=398
+                ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_1  (cost=0.42..4754.63 rows=71644 width=4) (actual time=0.025..4.125 rows=10000 loops=1)
                       Index Cond: ((lower(name) >= 'python'::text) AND (lower(name) < 'pythoo'::text))
                       Filter: (lower(name) ~~ 'python%'::text)
-                      Buffers: shared hit=396
+                      Buffers: shared hit=398
   CTE prefix
-    ->  Limit  (cost=15953.64..15953.77 rows=50 width=39) (actual time=39.028..39.045 rows=50 loops=1)
-          Buffers: shared hit=3551
-          ->  Sort  (cost=15953.64..15985.20 rows=12623 width=39) (actual time=39.028..39.040 rows=50 loops=1)
+    ->  Limit  (cost=15845.47..15845.60 rows=50 width=39) (actual time=36.197..36.213 rows=50 loops=1)
+          Buffers: shared hit=3692
+          ->  Sort  (cost=15845.47..15876.35 rows=12349 width=39) (actual time=36.196..36.208 rows=50 loops=1)
                 Sort Key: (max((((CASE WHEN (lower(search_terms_3.name) = 'python'::text) THEN 1000 WHEN (lower(search_terms_3.attr_path) = 'python'::text) THEN 900 WHEN (lower(search_terms_3.name) ~~ 'python%'::text) THEN 800 WHEN (lower(search_terms_3.attr_path) ~~ 'python%'::text) THEN 700 ELSE 0 END)::double precision + ('100'::double precision * CASE WHEN (search_terms_3.name = search_terms_3.attr_path) THEN similarity(search_terms_3.name, 'python'::text) ELSE GREATEST(similarity(search_terms_3.name, 'python'::text), similarity(search_terms_3.attr_path, 'python'::text)) END)) + (CASE WHEN (search_terms_3.top_level_attr IS NOT NULL) THEN 25 ELSE 0 END)::double precision))) DESC, search_terms_3.name
                 Sort Method: top-N heapsort  Memory: 30kB
-                Buffers: shared hit=3551
-                ->  HashAggregate  (cost=15408.09..15534.32 rows=12623 width=39) (actual time=38.897..38.988 rows=202 loops=1)
+                Buffers: shared hit=3692
+                ->  HashAggregate  (cost=15311.76..15435.25 rows=12349 width=39) (actual time=36.069..36.156 rows=203 loops=1)
                       Group Key: search_terms_3.package_id, search_terms_3.name
                       Batches: 1  Memory Usage: 433kB
-                      Buffers: shared hit=3551
-                      ->  Append  (cost=0.02..8780.96 rows=126231 width=69) (actual time=5.426..37.973 rows=244 loops=1)
-                            Buffers: shared hit=3551
-                            ->  Result  (cost=0.02..7993.30 rows=125806 width=69) (actual time=5.402..5.404 rows=0 loops=1)
+                      Buffers: shared hit=3692
+                      ->  Append  (cost=0.02..8828.69 rows=123487 width=68) (actual time=5.590..35.132 rows=247 loops=1)
+                            Buffers: shared hit=3692
+                            ->  Result  (cost=0.02..8049.98 rows=123049 width=68) (actual time=5.553..5.554 rows=0 loops=1)
                                   One-Time Filter: (NOT (InitPlan 2).col1)
-                                  Buffers: shared hit=396
+                                  Buffers: shared hit=398
                                   InitPlan 2
-                                    ->  CTE Scan on breadth  (cost=0.00..0.02 rows=1 width=1) (actual time=5.400..5.400 rows=1 loops=1)
-                                          Buffers: shared hit=396
-                                  ->  Seq Scan on search_terms search_terms_3  (cost=0.02..7993.30 rows=125806 width=69) (never executed)
+                                    ->  CTE Scan on breadth  (cost=0.00..0.02 rows=1 width=1) (actual time=5.550..5.550 rows=1 loops=1)
+                                          Buffers: shared hit=398
+                                  ->  Seq Scan on search_terms search_terms_3  (cost=0.02..8049.98 rows=123049 width=68) (never executed)
                                         Filter: ((lower(name) ~~ 'python%'::text) OR (lower(attr_path) ~~ 'python%'::text))
-                            ->  Result  (cost=8.88..16.76 rows=2 width=69) (actual time=0.023..0.028 rows=15 loops=1)
+                            ->  Result  (cost=8.88..16.76 rows=2 width=68) (actual time=0.035..0.042 rows=16 loops=1)
                                   One-Time Filter: (InitPlan 3).col1
-                                  Buffers: shared hit=7
+                                  Buffers: shared hit=8
                                   InitPlan 3
                                     ->  CTE Scan on breadth breadth_1  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.001 rows=1 loops=1)
-                                  ->  Bitmap Heap Scan on search_terms search_terms_4  (cost=8.88..16.76 rows=2 width=69) (actual time=0.020..0.022 rows=15 loops=1)
+                                  ->  Bitmap Heap Scan on search_terms search_terms_4  (cost=8.88..16.76 rows=2 width=68) (actual time=0.033..0.036 rows=16 loops=1)
                                         Recheck Cond: ((lower(name) = 'python'::text) OR (lower(attr_path) = 'python'::text))
-                                        Heap Blocks: exact=1
-                                        Buffers: shared hit=7
-                                        ->  BitmapOr  (cost=8.86..8.86 rows=2 width=0) (actual time=0.014..0.015 rows=0 loops=1)
+                                        Heap Blocks: exact=2
+                                        Buffers: shared hit=8
+                                        ->  BitmapOr  (cost=8.86..8.86 rows=2 width=0) (actual time=0.025..0.026 rows=0 loops=1)
                                               Buffers: shared hit=6
-                                              ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.008..0.008 rows=15 loops=1)
+                                              ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.018..0.019 rows=16 loops=1)
                                                     Index Cond: (lower(name) = 'python'::text)
                                                     Buffers: shared hit=3
-                                              ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.005..0.005 rows=1 loops=1)
+                                              ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.006..0.006 rows=1 loops=1)
                                                     Index Cond: (lower(attr_path) = 'python'::text)
                                                     Buffers: shared hit=3
-                            ->  Result  (cost=0.30..47.06 rows=323 width=69) (actual time=0.246..0.404 rows=166 loops=1)
+                            ->  Result  (cost=0.30..49.71 rows=336 width=68) (actual time=0.257..0.405 rows=167 loops=1)
                                   One-Time Filter: (InitPlan 4).col1
-                                  Buffers: shared hit=156
+                                  Buffers: shared hit=160
                                   InitPlan 4
                                     ->  CTE Scan on breadth breadth_2  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.001 rows=1 loops=1)
-                                  ->  Index Scan using search_terms_alias_idx on search_terms search_terms_5  (cost=0.30..47.06 rows=323 width=69) (actual time=0.244..0.382 rows=166 loops=1)
+                                  ->  Index Scan using search_terms_alias_idx on search_terms search_terms_5  (cost=0.30..49.71 rows=336 width=68) (actual time=0.255..0.384 rows=167 loops=1)
                                         Filter: ((lower(name) ~~ 'python%'::text) OR (lower(attr_path) ~~ 'python%'::text))
-                                        Rows Removed by Filter: 429
-                                        Buffers: shared hit=156
-                            ->  Subquery Scan on "*SELECT* 4"  (cost=1.72..75.23 rows=50 width=69) (actual time=0.751..0.757 rows=13 loops=1)
-                                  Buffers: shared hit=157
-                                  ->  Limit  (cost=1.72..74.73 rows=50 width=73) (actual time=0.750..0.753 rows=13 loops=1)
-                                        Buffers: shared hit=157
+                                        Rows Removed by Filter: 431
+                                        Buffers: shared hit=160
+                            ->  Subquery Scan on "*SELECT* 4"  (cost=1.76..76.99 rows=50 width=68) (actual time=0.981..0.987 rows=14 loops=1)
+                                  Buffers: shared hit=198
+                                  ->  Limit  (cost=1.76..76.49 rows=50 width=72) (actual time=0.979..0.983 rows=14 loops=1)
+                                        Buffers: shared hit=198
                                         InitPlan 5
                                           ->  CTE Scan on breadth breadth_3  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.001 rows=1 loops=1)
-                                        ->  Incremental Sort  (cost=1.70..12801.83 rows=8766 width=73) (actual time=0.749..0.750 rows=13 loops=1)
+                                        ->  Incremental Sort  (cost=1.74..12870.94 rows=8610 width=72) (actual time=0.978..0.979 rows=14 loops=1)
                                               Sort Key: ((lower(search_terms_6.name) <-> 'python'::text)), search_terms_6.name
                                               Presorted Key: ((lower(search_terms_6.name) <-> 'python'::text))
                                               Full-sort Groups: 1  Sort Method: quicksort  Average Memory: 26kB  Peak Memory: 26kB
-                                              Buffers: shared hit=157
-                                              ->  Result  (cost=0.28..12407.43 rows=8766 width=73) (actual time=0.537..0.727 rows=13 loops=1)
+                                              Buffers: shared hit=198
+                                              ->  Result  (cost=0.28..12483.53 rows=8610 width=72) (actual time=0.152..0.964 rows=14 loops=1)
                                                     One-Time Filter: (InitPlan 5).col1
-                                                    Buffers: shared hit=157
-                                                    ->  Index Scan using search_terms_top_level_name_knn_idx on search_terms search_terms_6  (cost=0.28..12363.60 rows=8766 width=69) (actual time=0.533..0.700 rows=13 loops=1)
+                                                    Buffers: shared hit=198
+                                                    ->  Index Scan using search_terms_top_level_name_knn_idx on search_terms search_terms_6  (cost=0.28..12440.48 rows=8610 width=68) (actual time=0.148..0.933 rows=14 loops=1)
                                                           Index Cond: (lower(name) ~~ 'python%'::text)
                                                           Rows Removed by Index Recheck: 13
                                                           Order By: (lower(name) <-> 'python'::text)
-                                                          Buffers: shared hit=157
-                            ->  Subquery Scan on "*SELECT* 5"  (cost=0.60..17.45 rows=50 width=69) (actual time=30.752..31.353 rows=50 loops=1)
-                                  Buffers: shared hit=2835
-                                  ->  Limit  (cost=0.60..16.95 rows=50 width=73) (actual time=30.751..31.345 rows=50 loops=1)
-                                        Buffers: shared hit=2835
+                                                          Buffers: shared hit=198
+                            ->  Subquery Scan on "*SELECT* 5"  (cost=0.60..17.81 rows=50 width=68) (actual time=27.505..28.118 rows=50 loops=1)
+                                  Buffers: shared hit=2928
+                                  ->  Limit  (cost=0.60..17.31 rows=50 width=72) (actual time=27.504..28.110 rows=50 loops=1)
+                                        Buffers: shared hit=2928
                                         InitPlan 6
-                                          ->  CTE Scan on breadth breadth_4  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.000 rows=1 loops=1)
-                                        ->  Incremental Sort  (cost=0.58..21175.50 rows=64731 width=73) (actual time=30.749..31.339 rows=50 loops=1)
+                                          ->  CTE Scan on breadth breadth_4  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.001 rows=1 loops=1)
+                                        ->  Incremental Sort  (cost=0.58..21004.35 rows=62839 width=72) (actual time=27.503..28.104 rows=50 loops=1)
                                               Sort Key: ((lower(search_terms_7.name) <-> 'python'::text)), search_terms_7.name
                                               Presorted Key: ((lower(search_terms_7.name) <-> 'python'::text))
                                               Full-sort Groups: 2  Sort Methods: top-N heapsort, quicksort  Average Memory: 29kB  Peak Memory: 29kB
-                                              Pre-sorted Groups: 1  Sort Method: top-N heapsort  Average Memory: 26kB  Peak Memory: 26kB
-                                              Buffers: shared hit=2835
-                                              ->  Result  (cost=0.28..18266.56 rows=64731 width=73) (actual time=30.561..31.262 rows=170 loops=1)
+                                              Pre-sorted Groups: 1  Sort Method: top-N heapsort  Average Memory: 27kB  Peak Memory: 27kB
+                                              Buffers: shared hit=2928
+                                              ->  Result  (cost=0.28..18179.26 rows=62839 width=72) (actual time=27.313..28.024 rows=170 loops=1)
                                                     One-Time Filter: (InitPlan 6).col1
-                                                    Buffers: shared hit=2835
-                                                    ->  Index Scan using search_terms_nested_name_knn_idx on search_terms search_terms_7  (cost=0.28..17942.90 rows=64731 width=69) (actual time=30.546..30.887 rows=170 loops=1)
+                                                    Buffers: shared hit=2928
+                                                    ->  Index Scan using search_terms_nested_name_knn_idx on search_terms search_terms_7  (cost=0.28..17865.06 rows=62839 width=68) (actual time=27.298..27.640 rows=170 loops=1)
                                                           Index Cond: (lower(name) ~~ 'python%'::text)
                                                           Rows Removed by Index Recheck: 12
                                                           Order By: (lower(name) <-> 'python'::text)
-                                                          Buffers: shared hit=2835
-  ->  Sort  (cost=816.89..817.08 rows=75 width=44) (actual time=39.133..39.138 rows=50 loops=1)
+                                                          Buffers: shared hit=2928
+  ->  Sort  (cost=5442.43..5442.68 rows=100 width=44) (actual time=36.301..36.307 rows=50 loops=1)
         Sort Key: (max(prefix.rank)) DESC, (min(prefix.name))
         Sort Method: quicksort  Memory: 28kB
-        Buffers: shared hit=3551
-        ->  GroupAggregate  (cost=813.05..814.55 rows=75 width=44) (actual time=39.088..39.119 rows=50 loops=1)
+        Buffers: shared hit=3692
+        ->  GroupAggregate  (cost=5437.11..5439.11 rows=100 width=44) (actual time=36.267..36.289 rows=50 loops=1)
               Group Key: prefix.package_id
-              Buffers: shared hit=3551
-              ->  Sort  (cost=813.05..813.24 rows=75 width=42) (actual time=39.083..39.089 rows=50 loops=1)
+              Buffers: shared hit=3692
+              ->  Sort  (cost=5437.11..5437.36 rows=100 width=42) (actual time=36.262..36.268 rows=50 loops=1)
                     Sort Key: prefix.package_id
                     Sort Method: quicksort  Memory: 27kB
-                    Buffers: shared hit=3551
-                    ->  Append  (cost=0.00..810.72 rows=75 width=42) (actual time=39.031..39.075 rows=50 loops=1)
-                          Buffers: shared hit=3551
-                          ->  CTE Scan on prefix  (cost=0.00..1.00 rows=50 width=44) (actual time=39.030..39.045 rows=50 loops=1)
-                                Buffers: shared hit=3551
-                          ->  Subquery Scan on fuzzy  (cost=809.03..809.34 rows=25 width=39) (actual time=0.022..0.024 rows=0 loops=1)
-                                ->  Limit  (cost=809.03..809.09 rows=25 width=39) (actual time=0.022..0.023 rows=0 loops=1)
+                    Buffers: shared hit=3692
+                    ->  Append  (cost=0.00..5433.79 rows=100 width=42) (actual time=36.200..36.252 rows=50 loops=1)
+                          Buffers: shared hit=3692
+                          ->  CTE Scan on prefix  (cost=0.00..1.00 rows=50 width=44) (actual time=36.199..36.214 rows=50 loops=1)
+                                Buffers: shared hit=3692
+                          ->  Subquery Scan on fuzzy  (cost=5431.66..5432.29 rows=50 width=39) (actual time=0.030..0.032 rows=0 loops=1)
+                                ->  Limit  (cost=5431.66..5431.79 rows=50 width=39) (actual time=0.029..0.031 rows=0 loops=1)
                                       InitPlan 8
-                                        ->  Aggregate  (cost=1.12..1.14 rows=1 width=8) (actual time=0.009..0.009 rows=1 loops=1)
+                                        ->  Aggregate  (cost=1.12..1.14 rows=1 width=8) (actual time=0.009..0.010 rows=1 loops=1)
                                               ->  CTE Scan on prefix prefix_1  (cost=0.00..1.00 rows=50 width=0) (actual time=0.000..0.004 rows=50 loops=1)
-                                      ->  Sort  (cost=807.90..807.96 rows=25 width=39) (actual time=0.021..0.022 rows=0 loops=1)
+                                      ->  Sort  (cost=5430.53..5437.08 rows=2620 width=39) (actual time=0.028..0.030 rows=0 loops=1)
                                             Sort Key: (max((((CASE WHEN (lower(search_terms.name) = 'python'::text) THEN 1000 WHEN (lower(search_terms.attr_path) = 'python'::text) THEN 900 WHEN (lower(search_terms.name) ~~ 'python%'::text) THEN 800 WHEN (lower(search_terms.attr_path) ~~ 'python%'::text) THEN 700 ELSE 0 END)::double precision + ('100'::double precision * CASE WHEN (search_terms.name = search_terms.attr_path) THEN similarity(search_terms.name, 'python'::text) ELSE GREATEST(similarity(search_terms.name, 'python'::text), similarity(search_terms.attr_path, 'python'::text)) END)) + (CASE WHEN (search_terms.top_level_attr IS NOT NULL) THEN 25 ELSE 0 END)::double precision))) DESC, search_terms.name
                                             Sort Method: quicksort  Memory: 25kB
-                                            ->  GroupAggregate  (cost=805.69..807.32 rows=25 width=39) (actual time=0.017..0.019 rows=0 loops=1)
+                                            ->  HashAggregate  (cost=5317.30..5343.50 rows=2620 width=39) (actual time=0.022..0.024 rows=0 loops=1)
                                                   Group Key: search_terms.package_id, search_terms.name
-                                                  ->  Sort  (cost=805.69..805.75 rows=25 width=69) (actual time=0.016..0.017 rows=0 loops=1)
-                                                        Sort Key: search_terms.package_id, search_terms.name
-                                                        Sort Method: quicksort  Memory: 25kB
-                                                        ->  Result  (cost=623.35..805.11 rows=25 width=69) (actual time=0.011..0.012 rows=0 loops=1)
-                                                              One-Time Filter: ((InitPlan 8).col1 < 50)
-                                                              ->  Bitmap Heap Scan on search_terms  (cost=623.35..805.11 rows=25 width=69) (never executed)
-                                                                    Recheck Cond: ((name % 'python'::text) OR (attr_path % 'python'::text))
-                                                                    Filter: ((lower(name) !~~ 'python%'::text) AND (lower(attr_path) !~~ 'python%'::text))
-                                                                    ->  BitmapOr  (cost=623.35..623.35 rows=50 width=0) (never executed)
-                                                                          ->  Bitmap Index Scan on search_terms_name_trgm_idx  (cost=0.00..311.67 rows=25 width=0) (never executed)
-                                                                                Index Cond: (name % 'python'::text)
-                                                                          ->  Bitmap Index Scan on search_terms_attr_path_trgm_idx  (cost=0.00..311.67 rows=25 width=0) (never executed)
-                                                                                Index Cond: (attr_path % 'python'::text)
+                                                  Batches: 1  Memory Usage: 121kB
+                                                  ->  Result  (cost=1975.99..5179.75 rows=2620 width=68) (actual time=0.011..0.013 rows=0 loops=1)
+                                                        One-Time Filter: ((InitPlan 8).col1 < 50)
+                                                        ->  Bitmap Heap Scan on search_terms  (cost=1975.99..5179.75 rows=2620 width=68) (never executed)
+                                                              Recheck Cond: ((name % 'python'::text) OR (attr_path % 'python'::text))
+                                                              Filter: ((lower(name) !~~ 'python%'::text) AND (lower(attr_path) !~~ 'python%'::text))
+                                                              ->  BitmapOr  (cost=1975.99..1975.99 rows=5118 width=0) (never executed)
+                                                                    ->  Bitmap Index Scan on search_terms_name_trgm_idx  (cost=0.00..987.34 rows=2559 width=0) (never executed)
+                                                                          Index Cond: (name % 'python'::text)
+                                                                    ->  Bitmap Index Scan on search_terms_attr_path_trgm_idx  (cost=0.00..987.34 rows=2560 width=0) (never executed)
+                                                                          Index Cond: (attr_path % 'python'::text)
 Planning:
   Buffers: shared hit=4
-Planning Time: 1.444 ms
-Execution Time: 39.353 ms
+Planning Time: 1.428 ms
+Execution Time: 36.537 ms
 ```
 
 ### batched fetch, latest — q=python (50 hits)
 
-Parameters: `["113125,113133,113126,113128,115769,113132,113130,182211,113134,113127,113131,113129,144106,155721,167017,114993,169824,174570,180462,121545,130664,140883,152209,163594,113437,113601,114071,115023,115037,167503,167540,167741,168535,169306,169865,169884,171515,171561,171824,172863,173875,174633,174660,176746,176800,177119,178411,179650,180538,180567"]` — Execution Time: 11.602 ms
+Parameters: `["113125,113133,113126,113128,115769,113132,113130,182211,113134,113127,113131,113129,144106,155721,167017,275383,114993,169824,174570,180462,121545,130664,140883,152209,163594,113437,113601,114071,115023,115037,167503,167540,167741,168535,169306,169865,169884,171515,171561,171824,172863,173875,174633,174660,176746,176800,177119,178411,179650,180538"]` — Execution Time: 10.464 ms
 
 ```
-Limit  (cost=4130.51..104793.00 rows=50 width=1377) (actual time=6.805..11.474 rows=49 loops=1)
-  Buffers: shared hit=17675
-  ->  Unique  (cost=4130.51..104793.00 rows=50 width=1377) (actual time=6.803..11.468 rows=49 loops=1)
-        Buffers: shared hit=17675
-        ->  Incremental Sort  (cost=4130.51..104791.32 rows=672 width=1377) (actual time=6.802..11.434 rows=127 loops=1)
+Limit  (cost=4241.35..107618.59 rows=50 width=1378) (actual time=6.524..10.355 rows=50 loops=1)
+  Buffers: shared hit=18037
+  ->  Unique  (cost=4241.35..107618.59 rows=50 width=1378) (actual time=6.523..10.349 rows=50 loops=1)
+        Buffers: shared hit=18037
+        ->  Incremental Sort  (cost=4241.35..107616.83 rows=706 width=1378) (actual time=6.522..10.317 rows=123 loops=1)
               Sort Key: hits.ord, variants.system, variants.attr_path
               Presorted Key: hits.ord
-              Full-sort Groups: 4  Sort Method: quicksort  Average Memory: 69kB  Peak Memory: 69kB
-              Buffers: shared hit=17675
-              ->  Nested Loop  (cost=2076.40..104769.33 rows=672 width=1377) (actual time=2.529..11.305 rows=127 loops=1)
-                    Buffers: shared hit=17675
-                    ->  Function Scan on unnest hits  (cost=0.00..0.50 rows=50 width=12) (actual time=0.009..0.017 rows=50 loops=1)
-                    ->  Nested Loop  (cost=2076.40..2095.25 rows=13 width=1359) (actual time=0.218..0.225 rows=3 loops=50)
-                          Buffers: shared hit=17675
-                          ->  Nested Loop  (cost=2076.12..2091.38 rows=13 width=1314) (actual time=0.216..0.220 rows=3 loops=50)
-                                Buffers: shared hit=17294
-                                ->  Nested Loop  (cost=2075.69..2084.76 rows=13 width=331) (actual time=0.212..0.214 rows=3 loops=50)
-                                      Join Filter: (variants.version_id = versions_1.id)
-                                      Buffers: shared hit=16786
-                                      ->  Nested Loop  (cost=2075.26..2083.32 rows=1 width=45) (actual time=0.210..0.210 rows=1 loops=50)
-                                            Buffers: shared hit=16566
-                                            ->  Nested Loop  (cost=2074.84..2082.87 rows=1 width=22) (actual time=0.207..0.207 rows=1 loops=50)
-                                                  Buffers: shared hit=16370
-                                                  ->  Limit  (cost=2074.42..2074.42 rows=1 width=24) (actual time=0.203..0.203 rows=1 loops=50)
-                                                        Buffers: shared hit=16174
-                                                        ->  Sort  (cost=2074.42..2074.63 rows=85 width=24) (actual time=0.203..0.203 rows=1 loops=50)
+              Full-sort Groups: 4  Sort Method: quicksort  Average Memory: 65kB  Peak Memory: 65kB
+              Buffers: shared hit=18037
+              ->  Nested Loop  (cost=2131.84..107593.52 rows=706 width=1378) (actual time=2.319..10.201 rows=126 loops=1)
+                    Buffers: shared hit=18037
+                    ->  Nested Loop  (cost=2131.56..107383.45 rows=706 width=1323) (actual time=2.314..9.976 rows=126 loops=1)
+                          Buffers: shared hit=17659
+                          ->  Nested Loop  (cost=2131.14..107018.11 rows=706 width=340) (actual time=2.306..9.680 rows=126 loops=1)
+                                Join Filter: (variants.version_id = versions_1.id)
+                                Buffers: shared hit=17155
+                                ->  Nested Loop  (cost=2130.71..106939.17 rows=50 width=53) (actual time=2.301..9.516 rows=50 loops=1)
+                                      Buffers: shared hit=16928
+                                      ->  Nested Loop  (cost=2130.29..106916.94 rows=50 width=30) (actual time=2.295..9.356 rows=50 loops=1)
+                                            Buffers: shared hit=16728
+                                            ->  Nested Loop  (cost=2129.86..106494.69 rows=50 width=12) (actual time=2.288..9.195 rows=50 loops=1)
+                                                  Buffers: shared hit=16528
+                                                  ->  Function Scan on unnest hits  (cost=0.00..0.50 rows=50 width=12) (actual time=0.008..0.015 rows=50 loops=1)
+                                                  ->  Limit  (cost=2129.86..2129.86 rows=1 width=24) (actual time=0.183..0.183 rows=1 loops=50)
+                                                        Buffers: shared hit=16528
+                                                        ->  Sort  (cost=2129.86..2130.06 rows=79 width=24) (actual time=0.183..0.183 rows=1 loops=50)
                                                               Sort Key: (EXISTS(SubPlan 1)) DESC, ((SubPlan 2)) DESC, versions_1.sort_key DESC
                                                               Sort Method: top-N heapsort  Memory: 25kB
-                                                              Buffers: shared hit=16174
-                                                              ->  Nested Loop  (cost=0.86..2073.99 rows=85 width=24) (actual time=0.015..0.193 rows=34 loops=50)
-                                                                    Buffers: shared hit=16174
-                                                                    ->  Index Scan using versions_semver_idx on versions versions_1  (cost=0.43..66.18 rows=32 width=19) (actual time=0.005..0.009 rows=10 loops=50)
-                                                                          Index Cond: (package_id = hits.package_id)
-                                                                          Filter: (NOT prerelease)
-                                                                          Rows Removed by Filter: 2
-                                                                          Buffers: shared hit=231
-                                                                    ->  Index Scan using variants_identity_key on variants variants_1  (cost=0.43..32.45 rows=13 width=8) (actual time=0.002..0.003 rows=3 loops=512)
+                                                              Buffers: shared hit=16528
+                                                              ->  Nested Loop  (cost=0.86..2129.47 rows=79 width=24) (actual time=0.014..0.175 rows=35 loops=50)
+                                                                    Buffers: shared hit=16528
+                                                                    ->  Index Scan using versions_latest_idx on versions versions_1  (cost=0.43..66.26 rows=32 width=19) (actual time=0.004..0.007 rows=10 loops=50)
+                                                                          Index Cond: ((package_id = hits.package_id) AND (prerelease = false))
+                                                                          Buffers: shared hit=235
+                                                                    ->  Index Scan using variants_identity_key on variants variants_1  (cost=0.43..36.09 rows=14 width=8) (actual time=0.002..0.003 rows=3 loops=523)
                                                                           Index Cond: (version_id = versions_1.id)
-                                                                          Buffers: shared hit=2143
+                                                                          Buffers: shared hit=2213
                                                                     SubPlan 1
-                                                                      ->  Index Scan using variants_identity_key on variants b  (cost=0.43..32.45 rows=13 width=0) (actual time=0.002..0.002 rows=1 loops=1721)
+                                                                      ->  Index Scan using variants_identity_key on variants b  (cost=0.43..36.09 rows=14 width=0) (actual time=0.001..0.001 rows=1 loops=1756)
                                                                             Index Cond: (version_id = versions_1.id)
                                                                             Filter: (NOT broken)
-                                                                            Buffers: shared hit=6884
+                                                                            Buffers: shared hit=7024
                                                                     SubPlan 2
-                                                                      ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=1721)
-                                                                            Buffers: shared hit=6916
-                                                                            ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=1721)
+                                                                      ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=1756)
+                                                                            Buffers: shared hit=7056
+                                                                            ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=1756)
                                                                                   Index Cond: (variant_id = variants_1.id)
                                                                                   Filter: (NOT seeded)
                                                                                   Rows Removed by Filter: 1
-                                                                                  Buffers: shared hit=6916
-                                                  ->  Index Scan using versions_pkey on versions  (cost=0.43..8.45 rows=1 width=18) (actual time=0.003..0.003 rows=1 loops=49)
-                                                        Index Cond: (id = versions_1.id)
-                                                        Buffers: shared hit=196
-                                            ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.003..0.003 rows=1 loops=49)
-                                                  Index Cond: (id = versions.package_id)
-                                                  Buffers: shared hit=196
-                                      ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.28 rows=13 width=298) (actual time=0.002..0.002 rows=3 loops=49)
-                                            Index Cond: (version_id = versions.id)
-                                            Buffers: shared hit=220
-                                ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (actual time=0.002..0.002 rows=1 loops=127)
-                                      Index Cond: (id = variants.meta_id)
-                                      Buffers: shared hit=508
-                          ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=127)
-                                Index Cond: (seq = variants.commit_seq)
-                                Buffers: shared hit=381
+                                                                                  Buffers: shared hit=7056
+                                            ->  Index Scan using versions_pkey on versions  (cost=0.43..8.45 rows=1 width=18) (actual time=0.003..0.003 rows=1 loops=50)
+                                                  Index Cond: (id = versions_1.id)
+                                                  Buffers: shared hit=200
+                                      ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.003..0.003 rows=1 loops=50)
+                                            Index Cond: (id = versions.package_id)
+                                            Buffers: shared hit=200
+                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.40 rows=14 width=299) (actual time=0.002..0.002 rows=3 loops=50)
+                                      Index Cond: (version_id = versions.id)
+                                      Buffers: shared hit=227
+                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (actual time=0.002..0.002 rows=1 loops=126)
+                                Index Cond: (id = variants.meta_id)
+                                Buffers: shared hit=504
+                    ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=126)
+                          Index Cond: (seq = variants.commit_seq)
+                          Buffers: shared hit=378
 Planning:
-  Buffers: shared hit=112
-Planning Time: 18.823 ms
-Execution Time: 11.602 ms
+  Buffers: shared hit=115
+Planning Time: 17.985 ms
+Execution Time: 10.464 ms
 ```
 
 ### batched fetch, all versions — q=python (50 hits)
 
-Parameters: `["113125,113133,113126,113128,115769,113132,113130,182211,113134,113127,113131,113129,144106,155721,167017,114993,169824,174570,180462,121545,130664,140883,152209,163594,113437,113601,114071,115023,115037,167503,167540,167741,168535,169306,169865,169884,171515,171561,171824,172863,173875,174633,174660,176746,176800,177119,178411,179650,180538,180567"]` — Execution Time: 11.585 ms
+Parameters: `["113125,113133,113126,113128,115769,113132,113130,182211,113134,113127,113131,113129,144106,155721,167017,275383,114993,169824,174570,180462,121545,130664,140883,152209,163594,113437,113601,114071,115023,115037,167503,167540,167741,168535,169306,169865,169884,171515,171561,171824,172863,173875,174633,174660,176746,176800,177119,178411,179650,180538"]` — Execution Time: 12.023 ms
 
 ```
-Limit  (cost=116.51..1458.29 rows=1000 width=1392) (actual time=3.040..11.391 rows=635 loops=1)
-  Buffers: shared hit=12245
-  ->  Unique  (cost=116.51..5813.71 rows=4246 width=1392) (actual time=3.038..11.338 rows=635 loops=1)
-        Buffers: shared hit=12245
-        ->  Incremental Sort  (cost=116.51..5781.86 rows=4246 width=1392) (actual time=3.038..10.721 rows=2164 loops=1)
+Limit  (cost=119.91..1568.91 rows=1000 width=1393) (actual time=3.303..11.825 rows=647 loops=1)
+  Buffers: shared hit=12489
+  ->  Unique  (cost=119.91..5979.69 rows=4044 width=1393) (actual time=3.302..11.771 rows=647 loops=1)
+        Buffers: shared hit=12489
+        ->  Incremental Sort  (cost=119.91..5949.36 rows=4044 width=1393) (actual time=3.301..11.217 rows=2202 loops=1)
               Sort Key: hits.ord, versions.sort_key DESC, versions.version, variants.system, variants.attr_path
               Presorted Key: hits.ord
               Full-sort Groups: 19  Sort Method: quicksort  Average Memory: 126kB  Peak Memory: 126kB
-              Pre-sorted Groups: 13  Sort Method: quicksort  Average Memory: 882kB  Peak Memory: 882kB
-              Buffers: shared hit=12245
-              ->  Nested Loop  (cost=1.99..5591.75 rows=4246 width=1392) (actual time=0.057..7.503 rows=2164 loops=1)
-                    Buffers: shared hit=12245
-                    ->  Nested Loop  (cost=1.70..4929.67 rows=4246 width=1337) (actual time=0.047..6.307 rows=2164 loops=1)
-                          Buffers: shared hit=11729
-                          ->  Nested Loop  (cost=1.28..2768.89 rows=4246 width=354) (actual time=0.041..2.917 rows=2164 loops=1)
-                                Buffers: shared hit=3073
-                                ->  Nested Loop  (cost=0.85..506.15 rows=1603 width=64) (actual time=0.034..0.646 rows=635 loops=1)
+              Pre-sorted Groups: 13  Sort Method: quicksort  Average Memory: 912kB  Peak Memory: 912kB
+              Buffers: shared hit=12489
+              ->  Nested Loop  (cost=1.99..5769.66 rows=4044 width=1393) (actual time=0.060..7.899 rows=2202 loops=1)
+                    Buffers: shared hit=12489
+                    ->  Nested Loop  (cost=1.70..5121.54 rows=4044 width=1338) (actual time=0.050..6.567 rows=2202 loops=1)
+                          Buffers: shared hit=11973
+                          ->  Nested Loop  (cost=1.28..3028.84 rows=4044 width=355) (actual time=0.043..3.178 rows=2202 loops=1)
+                                Buffers: shared hit=3165
+                                ->  Nested Loop  (cost=0.85..507.87 rows=1633 width=64) (actual time=0.035..0.680 rows=647 loops=1)
                                       Join Filter: (versions.package_id = hits.package_id)
-                                      Buffers: shared hit=420
-                                      ->  Nested Loop  (cost=0.42..418.38 rows=50 width=43) (actual time=0.021..0.189 rows=50 loops=1)
+                                      Buffers: shared hit=436
+                                      ->  Nested Loop  (cost=0.42..418.38 rows=50 width=43) (actual time=0.021..0.190 rows=50 loops=1)
                                             Buffers: shared hit=200
-                                            ->  Function Scan on unnest hits  (cost=0.00..0.50 rows=50 width=12) (actual time=0.008..0.015 rows=50 loops=1)
+                                            ->  Function Scan on unnest hits  (cost=0.00..0.50 rows=50 width=12) (actual time=0.008..0.017 rows=50 loops=1)
                                             ->  Index Scan using packages_pkey on packages  (cost=0.42..8.36 rows=1 width=31) (actual time=0.003..0.003 rows=1 loops=50)
                                                   Index Cond: (id = hits.package_id)
                                                   Buffers: shared hit=200
-                                      ->  Index Scan using versions_package_version_key on versions  (cost=0.43..1.36 rows=32 width=33) (actual time=0.003..0.007 rows=13 loops=50)
+                                      ->  Index Scan using versions_package_version_key on versions  (cost=0.43..1.38 rows=33 width=33) (actual time=0.004..0.007 rows=13 loops=50)
                                             Index Cond: (package_id = packages.id)
-                                            Buffers: shared hit=220
-                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.28 rows=13 width=298) (actual time=0.002..0.003 rows=3 loops=635)
+                                            Buffers: shared hit=236
+                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.40 rows=14 width=299) (actual time=0.002..0.003 rows=3 loops=647)
                                       Index Cond: (version_id = versions.id)
-                                      Buffers: shared hit=2653
-                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=2164)
+                                      Buffers: shared hit=2729
+                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=2202)
                                 Index Cond: (id = variants.meta_id)
-                                Buffers: shared hit=8656
-                    ->  Memoize  (cost=0.29..0.31 rows=1 width=53) (actual time=0.000..0.000 rows=1 loops=2164)
+                                Buffers: shared hit=8808
+                    ->  Memoize  (cost=0.29..0.31 rows=1 width=53) (actual time=0.000..0.000 rows=1 loops=2202)
                           Cache Key: variants.commit_seq
                           Cache Mode: logical
-                          Hits: 1992  Misses: 172  Evictions: 0  Overflows: 0  Memory Usage: 27kB
+                          Hits: 2030  Misses: 172  Evictions: 0  Overflows: 0  Memory Usage: 27kB
                           Buffers: shared hit=516
                           ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.002..0.002 rows=1 loops=172)
                                 Index Cond: (seq = variants.commit_seq)
                                 Buffers: shared hit=516
 Planning:
-  Buffers: shared hit=68
-Planning Time: 10.049 ms
-Execution Time: 11.585 ms
+  Buffers: shared hit=69
+Planning Time: 10.504 ms
+Execution Time: 12.023 ms
 ```
 
 ### ranked terms — q=python313Packages.
 
-Parameters: `["python313Packages.","python313Packages."]` — Execution Time: 24.815 ms
+Parameters: `["python313Packages.","python313Packages."]` — Execution Time: 28.890 ms
 
 ```
-Limit  (cost=39603.48..39603.61 rows=50 width=44) (actual time=22.432..24.613 rows=50 loops=1)
-  Buffers: shared hit=2787
+Limit  (cost=39158.14..39158.27 rows=50 width=44) (actual time=26.417..28.711 rows=50 loops=1)
+  Buffers: shared hit=3018
   CTE breadth
-    ->  Aggregate  (cost=1091.68..1091.69 rows=1 width=1) (actual time=5.652..5.653 rows=1 loops=1)
-          Buffers: shared hit=472
-          ->  Limit  (cost=0.42..966.68 rows=10000 width=4) (actual time=0.021..5.048 rows=10000 loops=1)
-                Buffers: shared hit=472
-                ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_1  (cost=0.42..1227.95 rows=12704 width=4) (actual time=0.021..4.222 rows=10000 loops=1)
+    ->  Aggregate  (cost=1118.37..1118.38 rows=1 width=1) (actual time=9.391..9.392 rows=1 loops=1)
+          Buffers: shared hit=682
+          ->  Limit  (cost=0.42..993.37 rows=10000 width=4) (actual time=0.039..8.791 rows=10000 loops=1)
+                Buffers: shared hit=682
+                ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_1  (cost=0.42..1270.80 rows=12794 width=4) (actual time=0.039..8.002 rows=10000 loops=1)
                       Index Cond: ((lower(name) >= 'python313packages.'::text) AND (lower(name) < 'python313packages/'::text))
                       Filter: (lower(name) ~~ 'python313packages.%'::text)
-                      Buffers: shared hit=472
+                      Buffers: shared hit=682
   CTE prefix
-    ->  Limit  (cost=5894.57..5894.69 rows=50 width=39) (actual time=17.940..17.958 rows=50 loops=1)
-          Buffers: shared hit=2743
-          ->  Sort  (cost=5894.57..5900.80 rows=2494 width=39) (actual time=17.940..17.954 rows=50 loops=1)
+    ->  Limit  (cost=5941.55..5941.68 rows=50 width=39) (actual time=21.843..21.860 rows=50 loops=1)
+          Buffers: shared hit=2974
+          ->  Sort  (cost=5941.55..5947.83 rows=2512 width=39) (actual time=21.843..21.856 rows=50 loops=1)
                 Sort Key: (max((((CASE WHEN (lower(search_terms_3.name) = 'python313packages.'::text) THEN 1000 WHEN (lower(search_terms_3.attr_path) = 'python313packages.'::text) THEN 900 WHEN (lower(search_terms_3.name) ~~ 'python313packages.%'::text) THEN 800 WHEN (lower(search_terms_3.attr_path) ~~ 'python313packages.%'::text) THEN 700 ELSE 0 END)::double precision + ('100'::double precision * CASE WHEN (search_terms_3.name = search_terms_3.attr_path) THEN similarity(search_terms_3.name, 'python313Packages.'::text) ELSE GREATEST(similarity(search_terms_3.name, 'python313Packages.'::text), similarity(search_terms_3.attr_path, 'python313Packages.'::text)) END)) + (CASE WHEN (search_terms_3.top_level_attr IS NOT NULL) THEN 25 ELSE 0 END)::double precision))) DESC, search_terms_3.name
                 Sort Method: quicksort  Memory: 28kB
-                Buffers: shared hit=2743
-                ->  HashAggregate  (cost=5786.78..5811.72 rows=2494 width=39) (actual time=17.907..17.934 rows=50 loops=1)
+                Buffers: shared hit=2974
+                ->  HashAggregate  (cost=5832.98..5858.10 rows=2512 width=39) (actual time=21.810..21.836 rows=50 loops=1)
                       Group Key: search_terms_3.package_id, search_terms_3.name
                       Batches: 1  Memory Usage: 121kB
-                      Buffers: shared hit=2743
-                      ->  Append  (cost=694.52..4477.58 rows=24937 width=69) (actual time=17.704..17.739 rows=50 loops=1)
-                            Buffers: shared hit=2743
-                            ->  Result  (cost=694.52..4058.04 rows=24771 width=69) (actual time=5.657..5.659 rows=0 loops=1)
+                      Buffers: shared hit=2974
+                      ->  Append  (cost=704.02..4514.45 rows=25115 width=68) (actual time=21.652..21.679 rows=50 loops=1)
+                            Buffers: shared hit=2974
+                            ->  Result  (cost=704.02..4091.38 rows=24945 width=68) (actual time=9.395..9.396 rows=0 loops=1)
                                   One-Time Filter: (NOT (InitPlan 2).col1)
-                                  Buffers: shared hit=472
+                                  Buffers: shared hit=682
                                   InitPlan 2
-                                    ->  CTE Scan on breadth  (cost=0.00..0.02 rows=1 width=1) (actual time=5.654..5.654 rows=1 loops=1)
-                                          Buffers: shared hit=472
-                                  ->  Bitmap Heap Scan on search_terms search_terms_3  (cost=694.52..4058.04 rows=24771 width=69) (never executed)
+                                    ->  CTE Scan on breadth  (cost=0.00..0.02 rows=1 width=1) (actual time=9.392..9.393 rows=1 loops=1)
+                                          Buffers: shared hit=682
+                                  ->  Bitmap Heap Scan on search_terms search_terms_3  (cost=704.02..4091.38 rows=24945 width=68) (never executed)
                                         Recheck Cond: ((lower(name) ~~ 'python313packages.%'::text) OR (lower(attr_path) ~~ 'python313packages.%'::text))
                                         Filter: ((lower(name) ~~ 'python313packages.%'::text) OR (lower(attr_path) ~~ 'python313packages.%'::text))
-                                        ->  BitmapOr  (cost=694.50..694.50 rows=20126 width=0) (never executed)
-                                              ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..341.04 rows=10062 width=0) (never executed)
+                                        ->  BitmapOr  (cost=704.00..704.00 rows=20268 width=0) (never executed)
+                                              ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..345.75 rows=10133 width=0) (never executed)
                                                     Index Cond: ((lower(name) >= 'python313packages.'::text) AND (lower(name) < 'python313packages/'::text))
-                                              ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..341.07 rows=10065 width=0) (never executed)
+                                              ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..345.78 rows=10136 width=0) (never executed)
                                                     Index Cond: ((lower(attr_path) >= 'python313packages.'::text) AND (lower(attr_path) < 'python313packages/'::text))
-                            ->  Result  (cost=8.88..16.76 rows=2 width=69) (actual time=0.019..0.020 rows=0 loops=1)
+                            ->  Result  (cost=8.88..16.76 rows=2 width=68) (actual time=0.020..0.022 rows=0 loops=1)
                                   One-Time Filter: (InitPlan 3).col1
                                   Buffers: shared hit=6
                                   InitPlan 3
-                                    ->  CTE Scan on breadth breadth_1  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.000 rows=1 loops=1)
-                                  ->  Bitmap Heap Scan on search_terms search_terms_4  (cost=8.88..16.76 rows=2 width=69) (actual time=0.017..0.018 rows=0 loops=1)
+                                    ->  CTE Scan on breadth breadth_1  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.001 rows=1 loops=1)
+                                  ->  Bitmap Heap Scan on search_terms search_terms_4  (cost=8.88..16.76 rows=2 width=68) (actual time=0.018..0.019 rows=0 loops=1)
                                         Recheck Cond: ((lower(name) = 'python313packages.'::text) OR (lower(attr_path) = 'python313packages.'::text))
                                         Buffers: shared hit=6
-                                        ->  BitmapOr  (cost=8.86..8.86 rows=2 width=0) (actual time=0.011..0.012 rows=0 loops=1)
+                                        ->  BitmapOr  (cost=8.86..8.86 rows=2 width=0) (actual time=0.014..0.015 rows=0 loops=1)
                                               Buffers: shared hit=6
-                                              ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.006..0.006 rows=0 loops=1)
+                                              ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.008..0.009 rows=0 loops=1)
                                                     Index Cond: (lower(name) = 'python313packages.'::text)
                                                     Buffers: shared hit=3
-                                              ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.004..0.004 rows=0 loops=1)
+                                              ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.005..0.005 rows=0 loops=1)
                                                     Index Cond: (lower(attr_path) = 'python313packages.'::text)
                                                     Buffers: shared hit=3
-                            ->  Result  (cost=0.30..47.06 rows=64 width=69) (actual time=0.378..0.379 rows=0 loops=1)
+                            ->  Result  (cost=0.30..49.71 rows=68 width=68) (actual time=0.380..0.381 rows=0 loops=1)
                                   One-Time Filter: (InitPlan 4).col1
-                                  Buffers: shared hit=156
+                                  Buffers: shared hit=160
                                   InitPlan 4
                                     ->  CTE Scan on breadth breadth_2  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.000 rows=1 loops=1)
-                                  ->  Index Scan using search_terms_alias_idx on search_terms search_terms_5  (cost=0.30..47.06 rows=64 width=69) (actual time=0.376..0.377 rows=0 loops=1)
+                                  ->  Index Scan using search_terms_alias_idx on search_terms search_terms_5  (cost=0.30..49.71 rows=68 width=68) (actual time=0.378..0.379 rows=0 loops=1)
                                         Filter: ((lower(name) ~~ 'python313packages.%'::text) OR (lower(attr_path) ~~ 'python313packages.%'::text))
-                                        Rows Removed by Filter: 595
-                                        Buffers: shared hit=156
-                            ->  Subquery Scan on "*SELECT* 4"  (cost=3.56..168.80 rows=50 width=69) (actual time=0.218..0.220 rows=0 loops=1)
-                                  Buffers: shared hit=31
-                                  ->  Limit  (cost=3.56..168.30 rows=50 width=73) (actual time=0.217..0.219 rows=0 loops=1)
-                                        Buffers: shared hit=31
+                                        Rows Removed by Filter: 598
+                                        Buffers: shared hit=160
+                            ->  Subquery Scan on "*SELECT* 4"  (cost=3.56..168.67 rows=50 width=68) (actual time=0.302..0.304 rows=0 loops=1)
+                                  Buffers: shared hit=47
+                                  ->  Limit  (cost=3.56..168.17 rows=50 width=72) (actual time=0.302..0.303 rows=0 loops=1)
+                                        Buffers: shared hit=47
                                         InitPlan 5
-                                          ->  CTE Scan on breadth breadth_3  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.001 rows=1 loops=1)
-                                        ->  Incremental Sort  (cost=3.54..4982.05 rows=1511 width=73) (actual time=0.216..0.217 rows=0 loops=1)
+                                          ->  CTE Scan on breadth breadth_3  (cost=0.00..0.02 rows=1 width=1) (actual time=0.001..0.001 rows=1 loops=1)
+                                        ->  Incremental Sort  (cost=3.54..5063.87 rows=1537 width=72) (actual time=0.301..0.302 rows=0 loops=1)
                                               Sort Key: ((lower(search_terms_6.name) <-> 'python313packages.'::text)), search_terms_6.name
                                               Presorted Key: ((lower(search_terms_6.name) <-> 'python313packages.'::text))
                                               Full-sort Groups: 1  Sort Method: quicksort  Average Memory: 25kB  Peak Memory: 25kB
-                                              Buffers: shared hit=31
-                                              ->  Result  (cost=0.28..4914.05 rows=1511 width=73) (actual time=0.208..0.209 rows=0 loops=1)
+                                              Buffers: shared hit=47
+                                              ->  Result  (cost=0.28..4994.70 rows=1537 width=72) (actual time=0.288..0.289 rows=0 loops=1)
                                                     One-Time Filter: (InitPlan 5).col1
-                                                    Buffers: shared hit=31
-                                                    ->  Index Scan using search_terms_top_level_name_knn_idx on search_terms search_terms_6  (cost=0.28..4906.50 rows=1511 width=69) (actual time=0.207..0.207 rows=0 loops=1)
+                                                    Buffers: shared hit=47
+                                                    ->  Index Scan using search_terms_top_level_name_knn_idx on search_terms search_terms_6  (cost=0.28..4987.02 rows=1537 width=68) (actual time=0.286..0.286 rows=0 loops=1)
                                                           Index Cond: (lower(name) ~~ 'python313packages.%'::text)
                                                           Order By: (lower(name) <-> 'python313packages.'::text)
-                                                          Buffers: shared hit=31
-                            ->  Subquery Scan on "*SELECT* 5"  (cost=1.47..62.24 rows=50 width=69) (actual time=11.431..11.451 rows=50 loops=1)
-                                  Buffers: shared hit=2078
-                                  ->  Limit  (cost=1.47..61.74 rows=50 width=73) (actual time=11.430..11.441 rows=50 loops=1)
-                                        Buffers: shared hit=2078
+                                                          Buffers: shared hit=47
+                            ->  Subquery Scan on "*SELECT* 5"  (cost=1.48..62.35 rows=50 width=68) (actual time=11.553..11.568 rows=50 loops=1)
+                                  Buffers: shared hit=2079
+                                  ->  Limit  (cost=1.48..61.85 rows=50 width=72) (actual time=11.552..11.560 rows=50 loops=1)
+                                        Buffers: shared hit=2079
                                         InitPlan 6
-                                          ->  CTE Scan on breadth breadth_4  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.000 rows=1 loops=1)
-                                        ->  Incremental Sort  (cost=1.45..13453.38 rows=11160 width=73) (actual time=11.429..11.434 rows=50 loops=1)
+                                          ->  CTE Scan on breadth breadth_4  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.001 rows=1 loops=1)
+                                        ->  Incremental Sort  (cost=1.46..13549.68 rows=11221 width=72) (actual time=11.551..11.554 rows=50 loops=1)
                                               Sort Key: ((lower(search_terms_7.name) <-> 'python313packages.'::text)), search_terms_7.name
                                               Presorted Key: ((lower(search_terms_7.name) <-> 'python313packages.'::text))
                                               Full-sort Groups: 1  Sort Method: quicksort  Average Memory: 32kB  Peak Memory: 32kB
-                                              Buffers: shared hit=2078
-                                              ->  Result  (cost=0.28..12951.28 rows=11160 width=73) (actual time=11.177..11.397 rows=60 loops=1)
+                                              Buffers: shared hit=2079
+                                              ->  Result  (cost=0.28..13044.81 rows=11221 width=72) (actual time=11.272..11.520 rows=61 loops=1)
                                                     One-Time Filter: (InitPlan 6).col1
-                                                    Buffers: shared hit=2078
-                                                    ->  Index Scan using search_terms_nested_name_knn_idx on search_terms search_terms_7  (cost=0.28..12895.48 rows=11160 width=69) (actual time=11.163..11.251 rows=60 loops=1)
+                                                    Buffers: shared hit=2079
+                                                    ->  Index Scan using search_terms_nested_name_knn_idx on search_terms search_terms_7  (cost=0.28..12988.70 rows=11221 width=68) (actual time=11.260..11.363 rows=61 loops=1)
                                                           Index Cond: (lower(name) ~~ 'python313packages.%'::text)
                                                           Order By: (lower(name) <-> 'python313packages.'::text)
-                                                          Buffers: shared hit=2078
-  ->  Sort  (cost=32617.10..32617.35 rows=100 width=44) (actual time=22.431..24.594 rows=50 loops=1)
+                                                          Buffers: shared hit=2079
+  ->  Sort  (cost=32098.09..32098.34 rows=100 width=44) (actual time=26.416..28.693 rows=50 loops=1)
         Sort Key: (max(prefix.rank)) DESC, (min(prefix.name))
         Sort Method: quicksort  Memory: 28kB
-        Buffers: shared hit=2787
-        ->  GroupAggregate  (cost=32611.78..32613.78 rows=100 width=44) (actual time=22.390..24.570 rows=50 loops=1)
+        Buffers: shared hit=3018
+        ->  GroupAggregate  (cost=32092.77..32094.77 rows=100 width=44) (actual time=26.379..28.673 rows=50 loops=1)
               Group Key: prefix.package_id
-              Buffers: shared hit=2787
-              ->  Sort  (cost=32611.78..32612.03 rows=100 width=42) (actual time=22.381..24.544 rows=50 loops=1)
+              Buffers: shared hit=3018
+              ->  Sort  (cost=32092.77..32093.02 rows=100 width=42) (actual time=26.372..28.649 rows=50 loops=1)
                     Sort Key: prefix.package_id
                     Sort Method: quicksort  Memory: 27kB
-                    Buffers: shared hit=2787
-                    ->  Append  (cost=0.00..32608.46 rows=100 width=42) (actual time=17.944..24.529 rows=50 loops=1)
-                          Buffers: shared hit=2787
-                          ->  CTE Scan on prefix  (cost=0.00..1.00 rows=50 width=44) (actual time=17.943..17.957 rows=50 loops=1)
-                                Buffers: shared hit=2743
-                          ->  Subquery Scan on fuzzy  (cost=32606.33..32606.96 rows=50 width=39) (actual time=4.406..6.566 rows=0 loops=1)
+                    Buffers: shared hit=3018
+                    ->  Append  (cost=0.00..32089.44 rows=100 width=42) (actual time=21.846..28.636 rows=50 loops=1)
+                          Buffers: shared hit=3018
+                          ->  CTE Scan on prefix  (cost=0.00..1.00 rows=50 width=44) (actual time=21.846..21.860 rows=50 loops=1)
+                                Buffers: shared hit=2974
+                          ->  Subquery Scan on fuzzy  (cost=32087.32..32087.94 rows=50 width=39) (actual time=4.496..6.770 rows=0 loops=1)
                                 Buffers: shared hit=44
-                                ->  Limit  (cost=32606.33..32606.46 rows=50 width=39) (actual time=4.405..6.565 rows=0 loops=1)
+                                ->  Limit  (cost=32087.32..32087.44 rows=50 width=39) (actual time=4.496..6.769 rows=0 loops=1)
                                       Buffers: shared hit=44
                                       InitPlan 8
-                                        ->  Aggregate  (cost=1.12..1.14 rows=1 width=8) (actual time=0.008..0.009 rows=1 loops=1)
+                                        ->  Aggregate  (cost=1.12..1.14 rows=1 width=8) (actual time=0.009..0.009 rows=1 loops=1)
                                               ->  CTE Scan on prefix prefix_1  (cost=0.00..1.00 rows=50 width=0) (actual time=0.000..0.004 rows=50 loops=1)
-                                      ->  Sort  (cost=32605.20..32883.78 rows=111434 width=39) (actual time=4.404..6.563 rows=0 loops=1)
+                                      ->  Sort  (cost=32086.18..32358.77 rows=109035 width=39) (actual time=4.495..6.767 rows=0 loops=1)
                                             Sort Key: (max((((CASE WHEN (lower(search_terms.name) = 'python313packages.'::text) THEN 1000 WHEN (lower(search_terms.attr_path) = 'python313packages.'::text) THEN 900 WHEN (lower(search_terms.name) ~~ 'python313packages.%'::text) THEN 800 WHEN (lower(search_terms.attr_path) ~~ 'python313packages.%'::text) THEN 700 ELSE 0 END)::double precision + ('100'::double precision * CASE WHEN (search_terms.name = search_terms.attr_path) THEN similarity(search_terms.name, 'python313Packages.'::text) ELSE GREATEST(similarity(search_terms.name, 'python313Packages.'::text), similarity(search_terms.attr_path, 'python313Packages.'::text)) END)) + (CASE WHEN (search_terms.top_level_attr IS NOT NULL) THEN 25 ELSE 0 END)::double precision))) DESC, search_terms.name
                                             Sort Method: quicksort  Memory: 25kB
                                             Buffers: shared hit=44
-                                            ->  Finalize GroupAggregate  (cost=15622.57..28903.44 rows=111434 width=39) (actual time=4.398..6.555 rows=0 loops=1)
+                                            ->  Finalize GroupAggregate  (cost=15481.23..28464.12 rows=109035 width=39) (actual time=4.489..6.761 rows=0 loops=1)
                                                   Group Key: search_terms.package_id, search_terms.name
                                                   Buffers: shared hit=44
-                                                  ->  Gather Merge  (cost=15622.57..27295.86 rows=65765 width=39) (actual time=4.397..6.554 rows=0 loops=1)
+                                                  ->  Gather Merge  (cost=15481.23..26891.64 rows=64284 width=39) (actual time=4.488..6.759 rows=0 loops=1)
                                                         Workers Planned: 1
                                                         Workers Launched: 1
                                                         Buffers: shared hit=44
-                                                        ->  Partial GroupAggregate  (cost=14622.56..18897.29 rows=65765 width=39) (actual time=0.038..0.039 rows=0 loops=2)
+                                                        ->  Partial GroupAggregate  (cost=14481.22..18659.68 rows=64284 width=39) (actual time=0.044..0.044 rows=0 loops=2)
                                                               Group Key: search_terms.package_id, search_terms.name
                                                               Buffers: shared hit=44
-                                                              ->  Sort  (cost=14622.56..14786.98 rows=65765 width=69) (actual time=0.037..0.038 rows=0 loops=2)
+                                                              ->  Sort  (cost=14481.22..14641.93 rows=64284 width=68) (actual time=0.043..0.043 rows=0 loops=2)
                                                                     Sort Key: search_terms.package_id, search_terms.name
                                                                     Sort Method: quicksort  Memory: 25kB
                                                                     Buffers: shared hit=44
                                                                     Worker 0:  Sort Method: quicksort  Memory: 25kB
-                                                                    ->  Result  (cost=0.00..6661.21 rows=65765 width=69) (actual time=0.001..0.002 rows=0 loops=2)
+                                                                    ->  Result  (cost=0.00..6708.44 rows=64284 width=68) (actual time=0.001..0.001 rows=0 loops=2)
                                                                           One-Time Filter: ((InitPlan 8).col1 < 50)
-                                                                          ->  Parallel Seq Scan on search_terms  (cost=0.00..6661.21 rows=65765 width=69) (never executed)
+                                                                          ->  Parallel Seq Scan on search_terms  (cost=0.00..6708.44 rows=64284 width=68) (never executed)
                                                                                 Filter: (((name % 'python313Packages.'::text) OR (attr_path % 'python313Packages.'::text)) AND (lower(name) !~~ 'python313packages.%'::text) AND (lower(attr_path) !~~ 'python313packages.%'::text))
 Planning:
   Buffers: shared hit=4
-Planning Time: 1.442 ms
-Execution Time: 24.815 ms
+Planning Time: 1.418 ms
+Execution Time: 28.890 ms
 ```
 
 ### batched fetch, latest — q=python313Packages. (50 hits)
 
-Parameters: `["150986,152209,150834,152035,152503,152537,152607,144825,145013,147350,147764,147765,147997,148046,148297,148334,150150,150536,150586,150612,150629,150655,150684,150771,150780,150816,150824,150979,151062,151063,151070,151177,151212,151252,151267,151284,151298,151520,151586,151651,151873,272730,152489,152502,152504,152533,152553,152573,152630,152993"]` — Execution Time: 6.035 ms
+Parameters: `["150986,152209,150834,152035,152503,152537,152607,144825,145013,147350,147764,147765,147997,148046,148297,148334,150150,150536,150586,150612,150629,150655,150684,150771,150780,150816,150824,274938,150979,151062,151063,151070,151177,151212,151252,151267,151284,151298,151520,151586,151651,151873,272730,152489,152502,152504,152533,152553,152573,152630"]` — Execution Time: 5.453 ms
 
 ```
-Limit  (cost=4130.51..104793.00 rows=50 width=1377) (actual time=1.367..5.916 rows=50 loops=1)
-  Buffers: shared hit=8298
-  ->  Unique  (cost=4130.51..104793.00 rows=50 width=1377) (actual time=1.366..5.910 rows=50 loops=1)
-        Buffers: shared hit=8298
-        ->  Incremental Sort  (cost=4130.51..104791.32 rows=672 width=1377) (actual time=1.365..5.871 rows=181 loops=1)
+Limit  (cost=4241.35..107618.59 rows=50 width=1378) (actual time=1.178..5.339 rows=50 loops=1)
+  Buffers: shared hit=8221
+  ->  Unique  (cost=4241.35..107618.59 rows=50 width=1378) (actual time=1.177..5.333 rows=50 loops=1)
+        Buffers: shared hit=8221
+        ->  Incremental Sort  (cost=4241.35..107616.83 rows=706 width=1378) (actual time=1.176..5.296 rows=173 loops=1)
               Sort Key: hits.ord, variants.system, variants.attr_path
               Presorted Key: hits.ord
-              Full-sort Groups: 6  Sort Method: quicksort  Average Memory: 62kB  Peak Memory: 62kB
-              Buffers: shared hit=8298
-              ->  Nested Loop  (cost=2076.40..104769.33 rows=672 width=1377) (actual time=0.113..5.706 rows=183 loops=1)
-                    Buffers: shared hit=8298
-                    ->  Function Scan on unnest hits  (cost=0.00..0.50 rows=50 width=12) (actual time=0.008..0.014 rows=50 loops=1)
-                    ->  Nested Loop  (cost=2076.40..2095.25 rows=13 width=1359) (actual time=0.101..0.113 rows=4 loops=50)
-                          Buffers: shared hit=8298
-                          ->  Nested Loop  (cost=2076.12..2091.38 rows=13 width=1314) (actual time=0.100..0.107 rows=4 loops=50)
-                                Buffers: shared hit=7749
-                                ->  Nested Loop  (cost=2075.69..2084.76 rows=13 width=331) (actual time=0.096..0.099 rows=4 loops=50)
-                                      Join Filter: (variants.version_id = versions_1.id)
-                                      Buffers: shared hit=7017
-                                      ->  Nested Loop  (cost=2075.26..2083.32 rows=1 width=45) (actual time=0.094..0.095 rows=1 loops=50)
-                                            Buffers: shared hit=6737
-                                            ->  Nested Loop  (cost=2074.84..2082.87 rows=1 width=22) (actual time=0.091..0.092 rows=1 loops=50)
-                                                  Buffers: shared hit=6537
-                                                  ->  Limit  (cost=2074.42..2074.42 rows=1 width=24) (actual time=0.088..0.088 rows=1 loops=50)
-                                                        Buffers: shared hit=6337
-                                                        ->  Sort  (cost=2074.42..2074.63 rows=85 width=24) (actual time=0.088..0.088 rows=1 loops=50)
+              Full-sort Groups: 6  Sort Method: quicksort  Average Memory: 61kB  Peak Memory: 61kB
+              Buffers: shared hit=8221
+              ->  Nested Loop  (cost=2131.84..107593.52 rows=706 width=1378) (actual time=0.110..5.143 rows=175 loops=1)
+                    Buffers: shared hit=8221
+                    ->  Nested Loop  (cost=2131.56..107383.45 rows=706 width=1323) (actual time=0.105..4.896 rows=175 loops=1)
+                          Buffers: shared hit=7696
+                          ->  Nested Loop  (cost=2131.14..107018.11 rows=706 width=340) (actual time=0.098..4.394 rows=175 loops=1)
+                                Join Filter: (variants.version_id = versions_1.id)
+                                Buffers: shared hit=6996
+                                ->  Nested Loop  (cost=2130.71..106939.17 rows=50 width=53) (actual time=0.096..4.190 rows=50 loops=1)
+                                      Buffers: shared hit=6691
+                                      ->  Nested Loop  (cost=2130.29..106916.94 rows=50 width=30) (actual time=0.089..4.058 rows=50 loops=1)
+                                            Buffers: shared hit=6491
+                                            ->  Nested Loop  (cost=2129.86..106494.69 rows=50 width=12) (actual time=0.083..3.917 rows=50 loops=1)
+                                                  Buffers: shared hit=6291
+                                                  ->  Function Scan on unnest hits  (cost=0.00..0.50 rows=50 width=12) (actual time=0.009..0.015 rows=50 loops=1)
+                                                  ->  Limit  (cost=2129.86..2129.86 rows=1 width=24) (actual time=0.078..0.078 rows=1 loops=50)
+                                                        Buffers: shared hit=6291
+                                                        ->  Sort  (cost=2129.86..2130.06 rows=79 width=24) (actual time=0.077..0.077 rows=1 loops=50)
                                                               Sort Key: (EXISTS(SubPlan 1)) DESC, ((SubPlan 2)) DESC, versions_1.sort_key DESC
                                                               Sort Method: top-N heapsort  Memory: 25kB
-                                                              Buffers: shared hit=6337
-                                                              ->  Nested Loop  (cost=0.86..2073.99 rows=85 width=24) (actual time=0.014..0.084 rows=13 loops=50)
-                                                                    Buffers: shared hit=6337
-                                                                    ->  Index Scan using versions_semver_idx on versions versions_1  (cost=0.43..66.18 rows=32 width=19) (actual time=0.004..0.005 rows=3 loops=50)
-                                                                          Index Cond: (package_id = hits.package_id)
-                                                                          Filter: (NOT prerelease)
-                                                                          Buffers: shared hit=206
-                                                                    ->  Index Scan using variants_identity_key on variants variants_1  (cost=0.43..32.45 rows=13 width=8) (actual time=0.002..0.004 rows=4 loops=173)
+                                                              Buffers: shared hit=6291
+                                                              ->  Nested Loop  (cost=0.86..2129.47 rows=79 width=24) (actual time=0.014..0.074 rows=13 loops=50)
+                                                                    Buffers: shared hit=6291
+                                                                    ->  Index Scan using versions_latest_idx on versions versions_1  (cost=0.43..66.26 rows=32 width=19) (actual time=0.003..0.004 rows=3 loops=50)
+                                                                          Index Cond: ((package_id = hits.package_id) AND (prerelease = false))
+                                                                          Buffers: shared hit=217
+                                                                    ->  Index Scan using variants_identity_key on variants variants_1  (cost=0.43..36.09 rows=14 width=8) (actual time=0.002..0.004 rows=4 loops=173)
                                                                           Index Cond: (version_id = versions_1.id)
-                                                                          Buffers: shared hit=797
+                                                                          Buffers: shared hit=847
                                                                     SubPlan 1
-                                                                      ->  Index Scan using variants_identity_key on variants b  (cost=0.43..32.45 rows=13 width=0) (actual time=0.002..0.002 rows=1 loops=650)
+                                                                      ->  Index Scan using variants_identity_key on variants b  (cost=0.43..36.09 rows=14 width=0) (actual time=0.001..0.001 rows=1 loops=637)
                                                                             Index Cond: (version_id = versions_1.id)
                                                                             Filter: (NOT broken)
-                                                                            Buffers: shared hit=2600
+                                                                            Buffers: shared hit=2548
                                                                     SubPlan 2
-                                                                      ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=650)
-                                                                            Buffers: shared hit=2734
-                                                                            ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=650)
+                                                                      ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=637)
+                                                                            Buffers: shared hit=2679
+                                                                            ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=637)
                                                                                   Index Cond: (variant_id = variants_1.id)
                                                                                   Filter: (NOT seeded)
                                                                                   Rows Removed by Filter: 1
-                                                                                  Buffers: shared hit=2734
-                                                  ->  Index Scan using versions_pkey on versions  (cost=0.43..8.45 rows=1 width=18) (actual time=0.003..0.003 rows=1 loops=50)
-                                                        Index Cond: (id = versions_1.id)
-                                                        Buffers: shared hit=200
-                                            ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.002..0.002 rows=1 loops=50)
-                                                  Index Cond: (id = versions.package_id)
+                                                                                  Buffers: shared hit=2679
+                                            ->  Index Scan using versions_pkey on versions  (cost=0.43..8.45 rows=1 width=18) (actual time=0.002..0.002 rows=1 loops=50)
+                                                  Index Cond: (id = versions_1.id)
                                                   Buffers: shared hit=200
-                                      ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.28 rows=13 width=298) (actual time=0.002..0.003 rows=4 loops=50)
-                                            Index Cond: (version_id = versions.id)
-                                            Buffers: shared hit=280
-                                ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (actual time=0.002..0.002 rows=1 loops=183)
-                                      Index Cond: (id = variants.meta_id)
-                                      Buffers: shared hit=732
-                          ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=183)
-                                Index Cond: (seq = variants.commit_seq)
-                                Buffers: shared hit=549
+                                      ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.002..0.002 rows=1 loops=50)
+                                            Index Cond: (id = versions.package_id)
+                                            Buffers: shared hit=200
+                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.40 rows=14 width=299) (actual time=0.001..0.003 rows=4 loops=50)
+                                      Index Cond: (version_id = versions.id)
+                                      Buffers: shared hit=305
+                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (actual time=0.002..0.002 rows=1 loops=175)
+                                Index Cond: (id = variants.meta_id)
+                                Buffers: shared hit=700
+                    ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=175)
+                          Index Cond: (seq = variants.commit_seq)
+                          Buffers: shared hit=525
 Planning:
-  Buffers: shared hit=112
-Planning Time: 19.196 ms
-Execution Time: 6.035 ms
+  Buffers: shared hit=115
+Planning Time: 68.699 ms
+Execution Time: 5.453 ms
 ```
 
 ### batched fetch, all versions — q=python313Packages. (50 hits)
 
-Parameters: `["150986,152209,150834,152035,152503,152537,152607,144825,145013,147350,147764,147765,147997,148046,148297,148334,150150,150536,150586,150612,150629,150655,150684,150771,150780,150816,150824,150979,151062,151063,151070,151177,151212,151252,151267,151284,151298,151520,151586,151651,151873,272730,152489,152502,152504,152533,152553,152573,152630,152993"]` — Execution Time: 4.311 ms
+Parameters: `["150986,152209,150834,152035,152503,152537,152607,144825,145013,147350,147764,147765,147997,148046,148297,148334,150150,150536,150586,150612,150629,150655,150684,150771,150780,150816,150824,274938,150979,151062,151063,151070,151177,151212,151252,151267,151284,151298,151520,151586,151651,151873,272730,152489,152502,152504,152533,152553,152573,152630"]` — Execution Time: 4.306 ms
 
 ```
-Limit  (cost=116.51..1458.29 rows=1000 width=1392) (actual time=0.392..4.205 rows=173 loops=1)
-  Buffers: shared hit=3989
-  ->  Unique  (cost=116.51..5813.71 rows=4246 width=1392) (actual time=0.391..4.189 rows=173 loops=1)
-        Buffers: shared hit=3989
-        ->  Incremental Sort  (cost=116.51..5781.86 rows=4246 width=1392) (actual time=0.390..3.996 rows=650 loops=1)
+Limit  (cost=119.91..1568.91 rows=1000 width=1393) (actual time=0.547..4.177 rows=173 loops=1)
+  Buffers: shared hit=4003
+  ->  Unique  (cost=119.91..5979.69 rows=4044 width=1393) (actual time=0.546..4.161 rows=173 loops=1)
+        Buffers: shared hit=4003
+        ->  Incremental Sort  (cost=119.91..5949.36 rows=4044 width=1393) (actual time=0.545..4.012 rows=637 loops=1)
               Sort Key: hits.ord, versions.sort_key DESC, versions.version, variants.system, variants.attr_path
               Presorted Key: hits.ord
-              Full-sort Groups: 14  Sort Method: quicksort  Average Memory: 101kB  Peak Memory: 101kB
-              Pre-sorted Groups: 4  Sort Method: quicksort  Average Memory: 83kB  Peak Memory: 101kB
-              Buffers: shared hit=3989
-              ->  Nested Loop  (cost=1.99..5591.75 rows=4246 width=1392) (actual time=0.053..2.774 rows=650 loops=1)
-                    Buffers: shared hit=3989
-                    ->  Nested Loop  (cost=1.70..4929.67 rows=4246 width=1337) (actual time=0.044..2.395 rows=650 loops=1)
-                          Buffers: shared hit=3803
-                          ->  Nested Loop  (cost=1.28..2768.89 rows=4246 width=354) (actual time=0.038..1.250 rows=650 loops=1)
-                                Buffers: shared hit=1203
-                                ->  Nested Loop  (cost=0.85..506.15 rows=1603 width=64) (actual time=0.031..0.377 rows=173 loops=1)
+              Full-sort Groups: 14  Sort Method: quicksort  Average Memory: 105kB  Peak Memory: 105kB
+              Pre-sorted Groups: 2  Sort Method: quicksort  Average Memory: 65kB  Peak Memory: 101kB
+              Buffers: shared hit=4003
+              ->  Nested Loop  (cost=1.99..5769.66 rows=4044 width=1393) (actual time=0.055..2.800 rows=637 loops=1)
+                    Buffers: shared hit=4003
+                    ->  Nested Loop  (cost=1.70..5121.54 rows=4044 width=1338) (actual time=0.047..2.412 rows=637 loops=1)
+                          Buffers: shared hit=3814
+                          ->  Nested Loop  (cost=1.28..3028.84 rows=4044 width=355) (actual time=0.039..1.287 rows=637 loops=1)
+                                Buffers: shared hit=1266
+                                ->  Nested Loop  (cost=0.85..507.87 rows=1633 width=64) (actual time=0.032..0.398 rows=173 loops=1)
                                       Join Filter: (versions.package_id = hits.package_id)
-                                      Buffers: shared hit=406
-                                      ->  Nested Loop  (cost=0.42..418.38 rows=50 width=43) (actual time=0.022..0.153 rows=50 loops=1)
+                                      Buffers: shared hit=419
+                                      ->  Nested Loop  (cost=0.42..418.38 rows=50 width=43) (actual time=0.023..0.155 rows=50 loops=1)
                                             Buffers: shared hit=200
-                                            ->  Function Scan on unnest hits  (cost=0.00..0.50 rows=50 width=12) (actual time=0.008..0.013 rows=50 loops=1)
+                                            ->  Function Scan on unnest hits  (cost=0.00..0.50 rows=50 width=12) (actual time=0.008..0.014 rows=50 loops=1)
                                             ->  Index Scan using packages_pkey on packages  (cost=0.42..8.36 rows=1 width=31) (actual time=0.002..0.002 rows=1 loops=50)
                                                   Index Cond: (id = hits.package_id)
                                                   Buffers: shared hit=200
-                                      ->  Index Scan using versions_package_version_key on versions  (cost=0.43..1.36 rows=32 width=33) (actual time=0.003..0.004 rows=3 loops=50)
+                                      ->  Index Scan using versions_package_version_key on versions  (cost=0.43..1.38 rows=33 width=33) (actual time=0.003..0.004 rows=3 loops=50)
                                             Index Cond: (package_id = packages.id)
-                                            Buffers: shared hit=206
-                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.28 rows=13 width=298) (actual time=0.003..0.004 rows=4 loops=173)
+                                            Buffers: shared hit=219
+                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.40 rows=14 width=299) (actual time=0.002..0.004 rows=4 loops=173)
                                       Index Cond: (version_id = versions.id)
-                                      Buffers: shared hit=797
-                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=650)
+                                      Buffers: shared hit=847
+                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=637)
                                 Index Cond: (id = variants.meta_id)
-                                Buffers: shared hit=2600
-                    ->  Memoize  (cost=0.29..0.31 rows=1 width=53) (actual time=0.000..0.000 rows=1 loops=650)
+                                Buffers: shared hit=2548
+                    ->  Memoize  (cost=0.29..0.31 rows=1 width=53) (actual time=0.000..0.000 rows=1 loops=637)
                           Cache Key: variants.commit_seq
                           Cache Mode: logical
-                          Hits: 588  Misses: 62  Evictions: 0  Overflows: 0  Memory Usage: 10kB
-                          Buffers: shared hit=186
-                          ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=62)
+                          Hits: 574  Misses: 63  Evictions: 0  Overflows: 0  Memory Usage: 10kB
+                          Buffers: shared hit=189
+                          ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=63)
                                 Index Cond: (seq = variants.commit_seq)
-                                Buffers: shared hit=186
+                                Buffers: shared hit=189
 Planning:
-  Buffers: shared hit=68
-Planning Time: 10.265 ms
-Execution Time: 4.311 ms
+  Buffers: shared hit=69
+Planning Time: 10.220 ms
+Execution Time: 4.306 ms
 ```
 
 ### ranked terms — q=hello
 
-Parameters: `["hello","hello"]` — Execution Time: 89.498 ms
+Parameters: `["hello","hello"]` — Execution Time: 147.360 ms
 
 ```
-Limit  (cost=874.28..874.40 rows=50 width=44) (actual time=89.279..89.299 rows=14 loops=1)
-  Buffers: shared hit=1212
+Limit  (cost=2204.03..2204.16 rows=50 width=44) (actual time=147.134..147.156 rows=15 loops=1)
+  Buffers: shared hit=1538
   CTE breadth
-    ->  Aggregate  (cost=8.76..8.77 rows=1 width=1) (actual time=0.028..0.029 rows=1 loops=1)
+    ->  Aggregate  (cost=8.76..8.77 rows=1 width=1) (actual time=0.027..0.027 rows=1 loops=1)
           Buffers: shared hit=4
-          ->  Limit  (cost=0.42..8.45 rows=25 width=4) (actual time=0.020..0.025 rows=5 loops=1)
+          ->  Limit  (cost=0.42..8.45 rows=25 width=4) (actual time=0.019..0.023 rows=5 loops=1)
                 Buffers: shared hit=4
-                ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_1  (cost=0.42..8.45 rows=25 width=4) (actual time=0.019..0.024 rows=5 loops=1)
+                ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_1  (cost=0.42..8.45 rows=25 width=4) (actual time=0.018..0.022 rows=5 loops=1)
                       Index Cond: ((lower(name) >= 'hello'::text) AND (lower(name) < 'hellp'::text))
                       Filter: (lower(name) ~~ 'hello%'::text)
                       Buffers: shared hit=4
   CTE prefix
-    ->  Limit  (cost=68.19..68.32 rows=50 width=39) (actual time=0.083..0.096 rows=5 loops=1)
+    ->  Limit  (cost=68.30..68.42 rows=50 width=39) (actual time=0.079..0.094 rows=5 loops=1)
           Buffers: shared hit=11
-          ->  Sort  (cost=68.19..68.39 rows=78 width=39) (actual time=0.083..0.095 rows=5 loops=1)
+          ->  Sort  (cost=68.30..68.50 rows=79 width=39) (actual time=0.079..0.093 rows=5 loops=1)
                 Sort Key: (max((((CASE WHEN (lower(search_terms_3.name) = 'hello'::text) THEN 1000 WHEN (lower(search_terms_3.attr_path) = 'hello'::text) THEN 900 WHEN (lower(search_terms_3.name) ~~ 'hello%'::text) THEN 800 WHEN (lower(search_terms_3.attr_path) ~~ 'hello%'::text) THEN 700 ELSE 0 END)::double precision + ('100'::double precision * CASE WHEN (search_terms_3.name = search_terms_3.attr_path) THEN similarity(search_terms_3.name, 'hello'::text) ELSE GREATEST(similarity(search_terms_3.name, 'hello'::text), similarity(search_terms_3.attr_path, 'hello'::text)) END)) + (CASE WHEN (search_terms_3.top_level_attr IS NOT NULL) THEN 25 ELSE 0 END)::double precision))) DESC, search_terms_3.name
                 Sort Method: quicksort  Memory: 25kB
                 Buffers: shared hit=11
-                ->  HashAggregate  (cost=64.96..65.74 rows=78 width=39) (actual time=0.078..0.091 rows=5 loops=1)
+                ->  HashAggregate  (cost=65.02..65.81 rows=79 width=39) (actual time=0.074..0.089 rows=5 loops=1)
                       Group Key: search_terms_3.package_id, search_terms_3.name
                       Batches: 1  Memory Usage: 24kB
                       Buffers: shared hit=11
-                      ->  Append  (cost=8.90..60.86 rows=78 width=69) (actual time=0.046..0.068 rows=5 loops=1)
+                      ->  Append  (cost=8.91..60.87 rows=79 width=68) (actual time=0.044..0.067 rows=5 loops=1)
                             Buffers: shared hit=11
-                            ->  Result  (cost=8.90..12.92 rows=50 width=69) (actual time=0.046..0.052 rows=5 loops=1)
+                            ->  Result  (cost=8.91..12.93 rows=51 width=68) (actual time=0.044..0.050 rows=5 loops=1)
                                   One-Time Filter: (NOT (InitPlan 2).col1)
                                   Buffers: shared hit=11
                                   InitPlan 2
-                                    ->  CTE Scan on breadth  (cost=0.00..0.02 rows=1 width=1) (actual time=0.029..0.029 rows=1 loops=1)
+                                    ->  CTE Scan on breadth  (cost=0.00..0.02 rows=1 width=1) (actual time=0.027..0.028 rows=1 loops=1)
                                           Buffers: shared hit=4
-                                  ->  Bitmap Heap Scan on search_terms search_terms_3  (cost=8.90..12.92 rows=50 width=69) (actual time=0.015..0.018 rows=5 loops=1)
+                                  ->  Bitmap Heap Scan on search_terms search_terms_3  (cost=8.91..12.93 rows=51 width=68) (actual time=0.014..0.018 rows=5 loops=1)
                                         Recheck Cond: ((lower(name) ~~ 'hello%'::text) OR (lower(attr_path) ~~ 'hello%'::text))
                                         Filter: ((lower(name) ~~ 'hello%'::text) OR (lower(attr_path) ~~ 'hello%'::text))
                                         Heap Blocks: exact=1
                                         Buffers: shared hit=7
-                                        ->  BitmapOr  (cost=8.88..8.88 rows=1 width=0) (actual time=0.010..0.011 rows=0 loops=1)
+                                        ->  BitmapOr  (cost=8.89..8.89 rows=1 width=0) (actual time=0.009..0.011 rows=0 loops=1)
                                               Buffers: shared hit=6
                                               ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.003..0.003 rows=5 loops=1)
                                                     Index Cond: ((lower(name) >= 'hello'::text) AND (lower(name) < 'hellp'::text))
                                                     Buffers: shared hit=3
-                                              ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.007..0.007 rows=5 loops=1)
+                                              ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.006..0.006 rows=5 loops=1)
                                                     Index Cond: ((lower(attr_path) >= 'hello'::text) AND (lower(attr_path) < 'hellp'::text))
                                                     Buffers: shared hit=3
-                            ->  Result  (cost=8.88..16.76 rows=2 width=69) (actual time=0.001..0.003 rows=0 loops=1)
+                            ->  Result  (cost=8.88..16.76 rows=2 width=68) (actual time=0.001..0.003 rows=0 loops=1)
                                   One-Time Filter: (InitPlan 3).col1
                                   InitPlan 3
                                     ->  CTE Scan on breadth breadth_1  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.001 rows=1 loops=1)
-                                  ->  Bitmap Heap Scan on search_terms search_terms_4  (cost=8.88..16.76 rows=2 width=69) (never executed)
+                                  ->  Bitmap Heap Scan on search_terms search_terms_4  (cost=8.88..16.76 rows=2 width=68) (never executed)
                                         Recheck Cond: ((lower(name) = 'hello'::text) OR (lower(attr_path) = 'hello'::text))
                                         ->  BitmapOr  (cost=8.86..8.86 rows=2 width=0) (never executed)
                                               ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..4.43 rows=1 width=0) (never executed)
                                                     Index Cond: (lower(name) = 'hello'::text)
                                               ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.43 rows=1 width=0) (never executed)
                                                     Index Cond: (lower(attr_path) = 'hello'::text)
-                            ->  Result  (cost=8.88..12.90 rows=1 width=69) (actual time=0.001..0.002 rows=0 loops=1)
+                            ->  Result  (cost=8.88..12.90 rows=1 width=68) (actual time=0.001..0.002 rows=0 loops=1)
                                   One-Time Filter: (InitPlan 4).col1
                                   InitPlan 4
-                                    ->  CTE Scan on breadth breadth_2  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.001 rows=1 loops=1)
-                                  ->  Bitmap Heap Scan on search_terms search_terms_5  (cost=8.88..12.90 rows=1 width=69) (never executed)
+                                    ->  CTE Scan on breadth breadth_2  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.000 rows=1 loops=1)
+                                  ->  Bitmap Heap Scan on search_terms search_terms_5  (cost=8.88..12.90 rows=1 width=68) (never executed)
                                         Recheck Cond: ((lower(name) ~~ 'hello%'::text) OR (lower(attr_path) ~~ 'hello%'::text))
                                         Filter: (((name = attr_path) IS FALSE) AND ((lower(name) ~~ 'hello%'::text) OR (lower(attr_path) ~~ 'hello%'::text)))
                                         ->  BitmapOr  (cost=8.86..8.86 rows=1 width=0) (never executed)
@@ -950,326 +943,324 @@ Limit  (cost=874.28..874.40 rows=50 width=44) (actual time=89.279..89.299 rows=1
                                                     Index Cond: ((lower(name) >= 'hello'::text) AND (lower(name) < 'hellp'::text))
                                               ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.43 rows=1 width=0) (never executed)
                                                     Index Cond: ((lower(attr_path) >= 'hello'::text) AND (lower(attr_path) < 'hellp'::text))
-                            ->  Subquery Scan on "*SELECT* 4"  (cost=8.51..8.54 rows=3 width=69) (actual time=0.004..0.005 rows=0 loops=1)
-                                  ->  Limit  (cost=8.51..8.51 rows=3 width=73) (actual time=0.003..0.005 rows=0 loops=1)
+                            ->  Subquery Scan on "*SELECT* 4"  (cost=8.51..8.54 rows=3 width=68) (actual time=0.004..0.005 rows=0 loops=1)
+                                  ->  Limit  (cost=8.51..8.51 rows=3 width=72) (actual time=0.003..0.005 rows=0 loops=1)
                                         InitPlan 5
                                           ->  CTE Scan on breadth breadth_3  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.000 rows=1 loops=1)
-                                        ->  Sort  (cost=8.49..8.49 rows=3 width=73) (actual time=0.003..0.003 rows=0 loops=1)
+                                        ->  Sort  (cost=8.49..8.49 rows=3 width=72) (actual time=0.003..0.003 rows=0 loops=1)
                                               Sort Key: ((lower(search_terms_6.name) <-> 'hello'::text)), search_terms_6.name
                                               Sort Method: quicksort  Memory: 25kB
-                                              ->  Result  (cost=0.42..8.46 rows=3 width=73) (actual time=0.001..0.001 rows=0 loops=1)
+                                              ->  Result  (cost=0.42..8.46 rows=3 width=72) (actual time=0.001..0.001 rows=0 loops=1)
                                                     One-Time Filter: (InitPlan 5).col1
-                                                    ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_6  (cost=0.42..8.45 rows=3 width=69) (never executed)
+                                                    ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_6  (cost=0.42..8.45 rows=3 width=68) (never executed)
                                                           Index Cond: ((lower(name) >= 'hello'::text) AND (lower(name) < 'hellp'::text))
                                                           Filter: ((top_level_attr IS NOT NULL) AND ((name = attr_path) IS TRUE) AND (lower(name) ~~ 'hello%'::text))
-                            ->  Subquery Scan on "*SELECT* 5"  (cost=9.07..9.34 rows=22 width=69) (actual time=0.002..0.004 rows=0 loops=1)
-                                  ->  Limit  (cost=9.07..9.12 rows=22 width=73) (actual time=0.002..0.003 rows=0 loops=1)
+                            ->  Subquery Scan on "*SELECT* 5"  (cost=9.07..9.34 rows=22 width=68) (actual time=0.002..0.003 rows=0 loops=1)
+                                  ->  Limit  (cost=9.07..9.12 rows=22 width=72) (actual time=0.002..0.003 rows=0 loops=1)
                                         InitPlan 6
                                           ->  CTE Scan on breadth breadth_4  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.000 rows=1 loops=1)
-                                        ->  Sort  (cost=9.05..9.10 rows=22 width=73) (actual time=0.002..0.002 rows=0 loops=1)
+                                        ->  Sort  (cost=9.05..9.10 rows=22 width=72) (actual time=0.002..0.002 rows=0 loops=1)
                                               Sort Key: ((lower(search_terms_7.name) <-> 'hello'::text)), search_terms_7.name
                                               Sort Method: quicksort  Memory: 25kB
-                                              ->  Result  (cost=0.42..8.56 rows=22 width=73) (actual time=0.001..0.001 rows=0 loops=1)
+                                              ->  Result  (cost=0.42..8.56 rows=22 width=72) (actual time=0.001..0.001 rows=0 loops=1)
                                                     One-Time Filter: (InitPlan 6).col1
-                                                    ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_7  (cost=0.42..8.45 rows=22 width=69) (never executed)
+                                                    ->  Index Scan using search_terms_name_lower_idx on search_terms search_terms_7  (cost=0.42..8.45 rows=22 width=68) (never executed)
                                                           Index Cond: ((lower(name) >= 'hello'::text) AND (lower(name) < 'hellp'::text))
                                                           Filter: ((top_level_attr IS NULL) AND ((name = attr_path) IS TRUE) AND (lower(name) ~~ 'hello%'::text))
-  ->  Sort  (cost=797.19..797.44 rows=100 width=44) (actual time=89.278..89.282 rows=14 loops=1)
+  ->  Sort  (cost=2126.84..2127.09 rows=100 width=44) (actual time=147.133..147.138 rows=15 loops=1)
         Sort Key: (max(prefix.rank)) DESC, (min(prefix.name))
-        Sort Method: quicksort  Memory: 25kB
-        Buffers: shared hit=1212
-        ->  GroupAggregate  (cost=791.87..793.87 rows=100 width=44) (actual time=89.265..89.274 rows=14 loops=1)
+        Sort Method: quicksort  Memory: 26kB
+        Buffers: shared hit=1538
+        ->  GroupAggregate  (cost=2121.52..2123.52 rows=100 width=44) (actual time=147.119..147.129 rows=15 loops=1)
               Group Key: prefix.package_id
-              Buffers: shared hit=1212
-              ->  Sort  (cost=791.87..792.12 rows=100 width=42) (actual time=89.261..89.265 rows=14 loops=1)
+              Buffers: shared hit=1538
+              ->  Sort  (cost=2121.52..2121.77 rows=100 width=42) (actual time=147.115..147.120 rows=15 loops=1)
                     Sort Key: prefix.package_id
                     Sort Method: quicksort  Memory: 25kB
-                    Buffers: shared hit=1212
-                    ->  Append  (cost=0.00..788.55 rows=100 width=42) (actual time=0.085..89.260 rows=14 loops=1)
-                          Buffers: shared hit=1212
-                          ->  CTE Scan on prefix  (cost=0.00..1.00 rows=50 width=44) (actual time=0.085..0.086 rows=5 loops=1)
+                    Buffers: shared hit=1538
+                    ->  Append  (cost=0.00..2118.20 rows=100 width=42) (actual time=0.081..147.113 rows=15 loops=1)
+                          Buffers: shared hit=1538
+                          ->  CTE Scan on prefix  (cost=0.00..1.00 rows=50 width=44) (actual time=0.081..0.082 rows=5 loops=1)
                                 Buffers: shared hit=11
-                          ->  Subquery Scan on fuzzy  (cost=786.42..787.05 rows=50 width=39) (actual time=89.165..89.170 rows=9 loops=1)
-                                Buffers: shared hit=1201
-                                ->  Limit  (cost=786.42..786.55 rows=50 width=39) (actual time=89.164..89.167 rows=9 loops=1)
-                                      Buffers: shared hit=1201
+                          ->  Subquery Scan on fuzzy  (cost=2116.07..2116.70 rows=50 width=39) (actual time=147.021..147.027 rows=10 loops=1)
+                                Buffers: shared hit=1527
+                                ->  Limit  (cost=2116.07..2116.20 rows=50 width=39) (actual time=147.020..147.024 rows=10 loops=1)
+                                      Buffers: shared hit=1527
                                       InitPlan 8
-                                        ->  Aggregate  (cost=1.12..1.14 rows=1 width=8) (actual time=0.002..0.003 rows=1 loops=1)
+                                        ->  Aggregate  (cost=1.12..1.14 rows=1 width=8) (actual time=0.002..0.002 rows=1 loops=1)
                                               ->  CTE Scan on prefix prefix_1  (cost=0.00..1.00 rows=50 width=0) (actual time=0.000..0.001 rows=5 loops=1)
-                                      ->  Sort  (cost=785.29..785.41 rows=50 width=39) (actual time=89.163..89.165 rows=9 loops=1)
+                                      ->  Sort  (cost=2114.94..2115.06 rows=51 width=39) (actual time=147.019..147.022 rows=10 loops=1)
                                             Sort Key: (max((((CASE WHEN (lower(search_terms.name) = 'hello'::text) THEN 1000 WHEN (lower(search_terms.attr_path) = 'hello'::text) THEN 900 WHEN (lower(search_terms.name) ~~ 'hello%'::text) THEN 800 WHEN (lower(search_terms.attr_path) ~~ 'hello%'::text) THEN 700 ELSE 0 END)::double precision + ('100'::double precision * CASE WHEN (search_terms.name = search_terms.attr_path) THEN similarity(search_terms.name, 'hello'::text) ELSE GREATEST(similarity(search_terms.name, 'hello'::text), similarity(search_terms.attr_path, 'hello'::text)) END)) + (CASE WHEN (search_terms.top_level_attr IS NOT NULL) THEN 25 ELSE 0 END)::double precision))) DESC, search_terms.name
                                             Sort Method: quicksort  Memory: 25kB
-                                            Buffers: shared hit=1201
-                                            ->  GroupAggregate  (cost=780.63..783.88 rows=50 width=39) (actual time=89.141..89.159 rows=9 loops=1)
+                                            Buffers: shared hit=1527
+                                            ->  GroupAggregate  (cost=2110.17..2113.49 rows=51 width=39) (actual time=146.994..147.015 rows=10 loops=1)
                                                   Group Key: search_terms.package_id, search_terms.name
-                                                  Buffers: shared hit=1201
-                                                  ->  Sort  (cost=780.63..780.75 rows=50 width=69) (actual time=89.127..89.130 rows=9 loops=1)
+                                                  Buffers: shared hit=1527
+                                                  ->  Sort  (cost=2110.17..2110.30 rows=51 width=68) (actual time=146.980..146.982 rows=10 loops=1)
                                                         Sort Key: search_terms.package_id, search_terms.name
                                                         Sort Method: quicksort  Memory: 25kB
-                                                        Buffers: shared hit=1201
-                                                        ->  Result  (cost=597.46..779.22 rows=50 width=69) (actual time=41.320..89.117 rows=9 loops=1)
+                                                        Buffers: shared hit=1527
+                                                        ->  Result  (cost=1923.46..2108.73 rows=51 width=68) (actual time=71.044..146.969 rows=10 loops=1)
                                                               One-Time Filter: ((InitPlan 8).col1 < 50)
-                                                              Buffers: shared hit=1201
-                                                              ->  Bitmap Heap Scan on search_terms  (cost=597.46..779.22 rows=50 width=69) (actual time=41.316..89.109 rows=9 loops=1)
+                                                              Buffers: shared hit=1527
+                                                              ->  Bitmap Heap Scan on search_terms  (cost=1923.46..2108.73 rows=51 width=68) (actual time=71.040..146.960 rows=10 loops=1)
                                                                     Recheck Cond: ((name % 'hello'::text) OR (attr_path % 'hello'::text))
-                                                                    Rows Removed by Index Recheck: 17526
+                                                                    Rows Removed by Index Recheck: 17553
                                                                     Filter: ((lower(name) !~~ 'hello%'::text) AND (lower(attr_path) !~~ 'hello%'::text))
                                                                     Rows Removed by Filter: 5
-                                                                    Heap Blocks: exact=1035
-                                                                    Buffers: shared hit=1201
-                                                                    ->  BitmapOr  (cost=597.46..597.46 rows=50 width=0) (actual time=4.619..4.620 rows=0 loops=1)
-                                                                          Buffers: shared hit=166
-                                                                          ->  Bitmap Index Scan on search_terms_name_trgm_idx  (cost=0.00..298.72 rows=25 width=0) (actual time=2.315..2.315 rows=17540 loops=1)
+                                                                    Heap Blocks: exact=1049
+                                                                    Buffers: shared hit=1527
+                                                                    ->  BitmapOr  (cost=1923.46..1923.46 rows=51 width=0) (actual time=7.703..7.704 rows=0 loops=1)
+                                                                          Buffers: shared hit=478
+                                                                          ->  Bitmap Index Scan on search_terms_name_trgm_idx  (cost=0.00..961.72 rows=25 width=0) (actual time=3.752..3.752 rows=17568 loops=1)
                                                                                 Index Cond: (name % 'hello'::text)
-                                                                                Buffers: shared hit=83
-                                                                          ->  Bitmap Index Scan on search_terms_attr_path_trgm_idx  (cost=0.00..298.72 rows=25 width=0) (actual time=2.303..2.303 rows=17540 loops=1)
+                                                                                Buffers: shared hit=239
+                                                                          ->  Bitmap Index Scan on search_terms_attr_path_trgm_idx  (cost=0.00..961.72 rows=25 width=0) (actual time=3.950..3.950 rows=17568 loops=1)
                                                                                 Index Cond: (attr_path % 'hello'::text)
-                                                                                Buffers: shared hit=83
+                                                                                Buffers: shared hit=239
 Planning:
   Buffers: shared hit=4
-Planning Time: 1.352 ms
-Execution Time: 89.498 ms
+Planning Time: 1.328 ms
+Execution Time: 147.360 ms
 ```
 
-### batched fetch, latest — q=hello (14 hits)
+### batched fetch, latest — q=hello (15 hits)
 
-Parameters: `["51324,51326,51325,51327,51328,87526,51329,51330,51319,51323,54432,51341,242138,42681"]` — Execution Time: 1.861 ms
+Parameters: `["51324,51326,51325,51327,51328,87526,51329,51330,51319,51323,54432,275101,51341,242138,42681"]` — Execution Time: 1.959 ms
 
 ```
-Limit  (cost=4023.72..29342.04 rows=14 width=1377) (actual time=1.478..1.764 rows=14 loops=1)
-  Buffers: shared hit=2687
-  ->  Unique  (cost=4023.72..29342.04 rows=14 width=1377) (actual time=1.477..1.762 rows=14 loops=1)
-        Buffers: shared hit=2687
-        ->  Incremental Sort  (cost=4023.72..29341.57 rows=188 width=1377) (actual time=1.476..1.749 rows=46 loops=1)
+Limit  (cost=4141.87..32285.75 rows=15 width=1378) (actual time=1.404..1.855 rows=15 loops=1)
+  Buffers: shared hit=2839
+  ->  Unique  (cost=4141.87..32285.75 rows=15 width=1378) (actual time=1.403..1.852 rows=15 loops=1)
+        Buffers: shared hit=2839
+        ->  Incremental Sort  (cost=4141.87..32285.22 rows=212 width=1378) (actual time=1.402..1.838 rows=47 loops=1)
               Sort Key: hits.ord, variants.system, variants.attr_path
               Presorted Key: hits.ord
-              Full-sort Groups: 2  Sort Method: quicksort  Average Memory: 65kB  Peak Memory: 65kB
-              Buffers: shared hit=2687
-              ->  Nested Loop  (cost=2076.40..29335.41 rows=188 width=1377) (actual time=0.180..1.699 rows=46 loops=1)
-                    Buffers: shared hit=2687
-                    ->  Function Scan on unnest hits  (cost=0.00..0.14 rows=14 width=12) (actual time=0.006..0.008 rows=14 loops=1)
-                    ->  Nested Loop  (cost=2076.40..2095.25 rows=13 width=1359) (actual time=0.111..0.120 rows=3 loops=14)
-                          Buffers: shared hit=2687
-                          ->  Nested Loop  (cost=2076.12..2091.38 rows=13 width=1314) (actual time=0.109..0.115 rows=3 loops=14)
-                                Buffers: shared hit=2549
-                                ->  Nested Loop  (cost=2075.69..2084.76 rows=13 width=331) (actual time=0.106..0.108 rows=3 loops=14)
-                                      Join Filter: (variants.version_id = versions_1.id)
-                                      Buffers: shared hit=2365
-                                      ->  Nested Loop  (cost=2075.26..2083.32 rows=1 width=45) (actual time=0.104..0.104 rows=1 loops=14)
-                                            Buffers: shared hit=2289
-                                            ->  Nested Loop  (cost=2074.84..2082.87 rows=1 width=22) (actual time=0.101..0.101 rows=1 loops=14)
-                                                  Buffers: shared hit=2233
-                                                  ->  Limit  (cost=2074.42..2074.42 rows=1 width=24) (actual time=0.098..0.098 rows=1 loops=14)
-                                                        Buffers: shared hit=2177
-                                                        ->  Sort  (cost=2074.42..2074.63 rows=85 width=24) (actual time=0.098..0.098 rows=1 loops=14)
+              Full-sort Groups: 2  Sort Method: quicksort  Average Memory: 64kB  Peak Memory: 64kB
+              Buffers: shared hit=2839
+              ->  Nested Loop  (cost=2131.84..32278.22 rows=212 width=1378) (actual time=0.177..1.779 rows=47 loops=1)
+                    Buffers: shared hit=2839
+                    ->  Nested Loop  (cost=2131.56..32215.14 rows=212 width=1323) (actual time=0.172..1.708 rows=47 loops=1)
+                          Buffers: shared hit=2698
+                          ->  Nested Loop  (cost=2131.14..32105.43 rows=212 width=340) (actual time=0.164..1.601 rows=47 loops=1)
+                                Join Filter: (variants.version_id = versions_1.id)
+                                Buffers: shared hit=2510
+                                ->  Nested Loop  (cost=2130.71..32081.75 rows=15 width=53) (actual time=0.161..1.545 rows=15 loops=1)
+                                      Buffers: shared hit=2424
+                                      ->  Nested Loop  (cost=2130.29..32075.08 rows=15 width=30) (actual time=0.156..1.506 rows=15 loops=1)
+                                            Buffers: shared hit=2364
+                                            ->  Nested Loop  (cost=2129.86..31948.41 rows=15 width=12) (actual time=0.150..1.396 rows=15 loops=1)
+                                                  Buffers: shared hit=2304
+                                                  ->  Function Scan on unnest hits  (cost=0.00..0.15 rows=15 width=12) (actual time=0.007..0.009 rows=15 loops=1)
+                                                  ->  Limit  (cost=2129.86..2129.86 rows=1 width=24) (actual time=0.092..0.092 rows=1 loops=15)
+                                                        Buffers: shared hit=2304
+                                                        ->  Sort  (cost=2129.86..2130.06 rows=79 width=24) (actual time=0.092..0.092 rows=1 loops=15)
                                                               Sort Key: (EXISTS(SubPlan 1)) DESC, ((SubPlan 2)) DESC, versions_1.sort_key DESC
                                                               Sort Method: top-N heapsort  Memory: 25kB
-                                                              Buffers: shared hit=2177
-                                                              ->  Nested Loop  (cost=0.86..2073.99 rows=85 width=24) (actual time=0.013..0.093 rows=15 loops=14)
-                                                                    Buffers: shared hit=2177
-                                                                    ->  Index Scan using versions_semver_idx on versions versions_1  (cost=0.43..66.18 rows=32 width=19) (actual time=0.004..0.005 rows=5 loops=14)
-                                                                          Index Cond: (package_id = hits.package_id)
-                                                                          Filter: (NOT prerelease)
-                                                                          Buffers: shared hit=56
-                                                                    ->  Index Scan using variants_identity_key on variants variants_1  (cost=0.43..32.45 rows=13 width=8) (actual time=0.002..0.003 rows=3 loops=75)
+                                                              Buffers: shared hit=2304
+                                                              ->  Nested Loop  (cost=0.86..2129.47 rows=79 width=24) (actual time=0.015..0.087 rows=15 loops=15)
+                                                                    Buffers: shared hit=2304
+                                                                    ->  Index Scan using versions_latest_idx on versions versions_1  (cost=0.43..66.26 rows=32 width=19) (actual time=0.004..0.005 rows=5 loops=15)
+                                                                          Index Cond: ((package_id = hits.package_id) AND (prerelease = false))
+                                                                          Buffers: shared hit=64
+                                                                    ->  Index Scan using variants_identity_key on variants variants_1  (cost=0.43..36.09 rows=14 width=8) (actual time=0.002..0.003 rows=3 loops=80)
                                                                           Index Cond: (version_id = versions_1.id)
-                                                                          Buffers: shared hit=359
+                                                                          Buffers: shared hit=390
                                                                     SubPlan 1
-                                                                      ->  Index Scan using variants_identity_key on variants b  (cost=0.43..32.45 rows=13 width=0) (actual time=0.002..0.002 rows=1 loops=216)
+                                                                      ->  Index Scan using variants_identity_key on variants b  (cost=0.43..36.09 rows=14 width=0) (actual time=0.001..0.001 rows=1 loops=227)
                                                                             Index Cond: (version_id = versions_1.id)
                                                                             Filter: (NOT broken)
-                                                                            Buffers: shared hit=864
+                                                                            Buffers: shared hit=908
                                                                     SubPlan 2
-                                                                      ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=216)
-                                                                            Buffers: shared hit=898
-                                                                            ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=216)
+                                                                      ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=227)
+                                                                            Buffers: shared hit=942
+                                                                            ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=227)
                                                                                   Index Cond: (variant_id = variants_1.id)
                                                                                   Filter: (NOT seeded)
                                                                                   Rows Removed by Filter: 1
-                                                                                  Buffers: shared hit=898
-                                                  ->  Index Scan using versions_pkey on versions  (cost=0.43..8.45 rows=1 width=18) (actual time=0.002..0.002 rows=1 loops=14)
-                                                        Index Cond: (id = versions_1.id)
-                                                        Buffers: shared hit=56
-                                            ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.002..0.002 rows=1 loops=14)
-                                                  Index Cond: (id = versions.package_id)
-                                                  Buffers: shared hit=56
-                                      ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.28 rows=13 width=298) (actual time=0.001..0.002 rows=3 loops=14)
-                                            Index Cond: (version_id = versions.id)
-                                            Buffers: shared hit=76
-                                ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (actual time=0.002..0.002 rows=1 loops=46)
-                                      Index Cond: (id = variants.meta_id)
-                                      Buffers: shared hit=184
-                          ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=46)
-                                Index Cond: (seq = variants.commit_seq)
-                                Buffers: shared hit=138
+                                                                                  Buffers: shared hit=942
+                                            ->  Index Scan using versions_pkey on versions  (cost=0.43..8.45 rows=1 width=18) (actual time=0.002..0.002 rows=1 loops=15)
+                                                  Index Cond: (id = versions_1.id)
+                                                  Buffers: shared hit=60
+                                      ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.002..0.002 rows=1 loops=15)
+                                            Index Cond: (id = versions.package_id)
+                                            Buffers: shared hit=60
+                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.40 rows=14 width=299) (actual time=0.001..0.003 rows=3 loops=15)
+                                      Index Cond: (version_id = versions.id)
+                                      Buffers: shared hit=86
+                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (actual time=0.002..0.002 rows=1 loops=47)
+                                Index Cond: (id = variants.meta_id)
+                                Buffers: shared hit=188
+                    ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=47)
+                          Index Cond: (seq = variants.commit_seq)
+                          Buffers: shared hit=141
 Planning:
-  Buffers: shared hit=112
-Planning Time: 18.078 ms
-Execution Time: 1.861 ms
+  Buffers: shared hit=115
+Planning Time: 27.098 ms
+Execution Time: 1.959 ms
 ```
 
-### batched fetch, all versions — q=hello (14 hits)
+### batched fetch, all versions — q=hello (15 hits)
 
-Parameters: `["51324,51326,51325,51327,51328,87526,51329,51330,51319,51323,54432,51341,242138,42681"]` — Execution Time: 1.745 ms
+Parameters: `["51324,51326,51325,51327,51328,87526,51329,51330,51319,51323,54432,275101,51341,242138,42681"]` — Execution Time: 1.871 ms
 
 ```
-Limit  (cost=128.53..1532.33 rows=1000 width=1392) (actual time=0.386..1.662 rows=75 loops=1)
-  Buffers: shared hit=1983
-  ->  Unique  (cost=128.53..1797.65 rows=1189 width=1392) (actual time=0.385..1.654 rows=75 loops=1)
-        Buffers: shared hit=1983
-        ->  Incremental Sort  (cost=128.53..1788.73 rows=1189 width=1392) (actual time=0.384..1.600 rows=216 loops=1)
+Limit  (cost=130.99..1640.18 rows=1000 width=1393) (actual time=0.313..1.786 rows=80 loops=1)
+  Buffers: shared hit=2103
+  ->  Unique  (cost=130.99..1961.63 rows=1213 width=1393) (actual time=0.312..1.777 rows=80 loops=1)
+        Buffers: shared hit=2103
+        ->  Incremental Sort  (cost=130.99..1952.54 rows=1213 width=1393) (actual time=0.312..1.721 rows=227 loops=1)
               Sort Key: hits.ord, versions.sort_key DESC, versions.version, variants.system, variants.attr_path
               Presorted Key: hits.ord
               Full-sort Groups: 5  Sort Method: quicksort  Average Memory: 88kB  Peak Memory: 88kB
-              Pre-sorted Groups: 3  Sort Method: quicksort  Average Memory: 50kB  Peak Memory: 54kB
-              Buffers: shared hit=1983
-              ->  Nested Loop  (cost=1.98..1735.49 rows=1189 width=1392) (actual time=0.047..1.176 rows=216 loops=1)
-                    Buffers: shared hit=1983
-                    ->  Nested Loop  (cost=1.70..1381.72 rows=1189 width=1337) (actual time=0.041..0.868 rows=216 loops=1)
-                          Buffers: shared hit=1335
-                          ->  Nested Loop  (cost=1.28..776.64 rows=1189 width=354) (actual time=0.035..0.507 rows=216 loops=1)
-                                Buffers: shared hit=471
-                                ->  Nested Loop  (cost=0.85..142.84 rows=449 width=64) (actual time=0.028..0.200 rows=75 loops=1)
+              Pre-sorted Groups: 3  Sort Method: quicksort  Average Memory: 52kB  Peak Memory: 54kB
+              Buffers: shared hit=2103
+              ->  Nested Loop  (cost=1.98..1898.64 rows=1213 width=1393) (actual time=0.048..1.267 rows=227 loops=1)
+                    Buffers: shared hit=2103
+                    ->  Nested Loop  (cost=1.70..1537.71 rows=1213 width=1338) (actual time=0.043..0.938 rows=227 loops=1)
+                          Buffers: shared hit=1422
+                          ->  Nested Loop  (cost=1.28..910.01 rows=1213 width=355) (actual time=0.036..0.560 rows=227 loops=1)
+                                Buffers: shared hit=514
+                                ->  Nested Loop  (cost=0.85..153.56 rows=490 width=64) (actual time=0.028..0.147 rows=80 loops=1)
                                       Join Filter: (versions.package_id = hits.package_id)
-                                      Buffers: shared hit=112
-                                      ->  Nested Loop  (cost=0.42..118.27 rows=14 width=43) (actual time=0.020..0.055 rows=14 loops=1)
-                                            Buffers: shared hit=56
-                                            ->  Function Scan on unnest hits  (cost=0.00..0.14 rows=14 width=12) (actual time=0.006..0.008 rows=14 loops=1)
-                                            ->  Index Scan using packages_pkey on packages  (cost=0.42..8.44 rows=1 width=31) (actual time=0.003..0.003 rows=1 loops=14)
+                                      Buffers: shared hit=124
+                                      ->  Nested Loop  (cost=0.42..126.72 rows=15 width=43) (actual time=0.019..0.059 rows=15 loops=1)
+                                            Buffers: shared hit=60
+                                            ->  Function Scan on unnest hits  (cost=0.00..0.15 rows=15 width=12) (actual time=0.007..0.009 rows=15 loops=1)
+                                            ->  Index Scan using packages_pkey on packages  (cost=0.42..8.44 rows=1 width=31) (actual time=0.003..0.003 rows=1 loops=15)
                                                   Index Cond: (id = hits.package_id)
-                                                  Buffers: shared hit=56
-                                      ->  Index Scan using versions_package_version_key on versions  (cost=0.43..1.36 rows=32 width=33) (actual time=0.008..0.009 rows=5 loops=14)
+                                                  Buffers: shared hit=60
+                                      ->  Index Scan using versions_package_version_key on versions  (cost=0.43..1.38 rows=33 width=33) (actual time=0.003..0.005 rows=5 loops=15)
                                             Index Cond: (package_id = packages.id)
-                                            Buffers: shared hit=56
-                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.28 rows=13 width=298) (actual time=0.002..0.003 rows=3 loops=75)
+                                            Buffers: shared hit=64
+                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.40 rows=14 width=299) (actual time=0.003..0.004 rows=3 loops=80)
                                       Index Cond: (version_id = versions.id)
-                                      Buffers: shared hit=359
-                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=216)
+                                      Buffers: shared hit=390
+                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=227)
                                 Index Cond: (id = variants.meta_id)
-                                Buffers: shared hit=864
-                    ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=216)
+                                Buffers: shared hit=908
+                    ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=227)
                           Index Cond: (seq = variants.commit_seq)
-                          Buffers: shared hit=648
+                          Buffers: shared hit=681
 Planning:
-  Buffers: shared hit=68
-Planning Time: 9.998 ms
-Execution Time: 1.745 ms
+  Buffers: shared hit=69
+Planning Time: 10.049 ms
+Execution Time: 1.871 ms
 ```
 
 ### ranked terms — q=-
 
-Parameters: `["-","-"]` — Execution Time: 882.215 ms
+Parameters: `["-","-"]` — Execution Time: 904.123 ms
 
 ```
-Limit  (cost=7698.67..7698.79 rows=50 width=44) (actual time=881.207..882.100 rows=0 loops=1)
-  Buffers: shared hit=2982
+Limit  (cost=7746.26..7746.39 rows=50 width=44) (actual time=903.761..903.993 rows=0 loops=1)
+  Buffers: shared hit=3003
   CTE prefix
-    ->  Limit  (cost=17.44..17.57 rows=50 width=39) (actual time=0.017..0.020 rows=0 loops=1)
+    ->  Limit  (cost=17.54..17.66 rows=50 width=39) (actual time=0.018..0.022 rows=0 loops=1)
           Buffers: shared hit=6
-          ->  Sort  (cost=17.44..17.57 rows=50 width=39) (actual time=0.016..0.019 rows=0 loops=1)
+          ->  Sort  (cost=17.54..17.67 rows=51 width=39) (actual time=0.018..0.021 rows=0 loops=1)
                 Sort Key: (max((((CASE WHEN (lower(search_terms_1.name) = '-'::text) THEN 1000 WHEN (lower(search_terms_1.attr_path) = '-'::text) THEN 900 WHEN (lower(search_terms_1.name) ~~ '-%'::text) THEN 800 WHEN (lower(search_terms_1.attr_path) ~~ '-%'::text) THEN 700 ELSE 0 END)::double precision + ('100'::double precision * CASE WHEN (search_terms_1.name = search_terms_1.attr_path) THEN similarity(search_terms_1.name, '-'::text) ELSE GREATEST(similarity(search_terms_1.name, '-'::text), similarity(search_terms_1.attr_path, '-'::text)) END)) + (CASE WHEN (search_terms_1.top_level_attr IS NOT NULL) THEN 25 ELSE 0 END)::double precision))) DESC, search_terms_1.name
                 Sort Method: quicksort  Memory: 25kB
                 Buffers: shared hit=6
-                ->  HashAggregate  (cost=15.53..16.03 rows=50 width=39) (actual time=0.015..0.017 rows=0 loops=1)
+                ->  HashAggregate  (cost=15.58..16.09 rows=51 width=39) (actual time=0.016..0.019 rows=0 loops=1)
                       Group Key: search_terms_1.package_id, search_terms_1.name
                       Batches: 1  Memory Usage: 24kB
                       Buffers: shared hit=6
-                      ->  Bitmap Heap Scan on search_terms search_terms_1  (cost=8.88..12.90 rows=50 width=69) (actual time=0.014..0.015 rows=0 loops=1)
+                      ->  Bitmap Heap Scan on search_terms search_terms_1  (cost=8.89..12.91 rows=51 width=68) (actual time=0.015..0.017 rows=0 loops=1)
                             Recheck Cond: ((lower(name) ~~ '-%'::text) OR (lower(attr_path) ~~ '-%'::text))
                             Filter: ((lower(name) ~~ '-%'::text) OR (lower(attr_path) ~~ '-%'::text))
                             Buffers: shared hit=6
-                            ->  BitmapOr  (cost=8.88..8.88 rows=1 width=0) (actual time=0.011..0.013 rows=0 loops=1)
+                            ->  BitmapOr  (cost=8.89..8.89 rows=1 width=0) (actual time=0.013..0.014 rows=0 loops=1)
                                   Buffers: shared hit=6
-                                  ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.007..0.008 rows=0 loops=1)
+                                  ->  Bitmap Index Scan on search_terms_name_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.008..0.009 rows=0 loops=1)
                                         Index Cond: ((lower(name) >= '-'::text) AND (lower(name) < '.'::text))
                                         Buffers: shared hit=3
-                                  ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.003..0.004 rows=0 loops=1)
+                                  ->  Bitmap Index Scan on search_terms_attr_path_lower_idx  (cost=0.00..4.43 rows=1 width=0) (actual time=0.004..0.004 rows=0 loops=1)
                                         Index Cond: ((lower(attr_path) >= '-'::text) AND (lower(attr_path) < '.'::text))
                                         Buffers: shared hit=3
-  ->  Sort  (cost=7681.10..7681.35 rows=100 width=44) (actual time=881.206..882.095 rows=0 loops=1)
+  ->  Sort  (cost=7728.60..7728.85 rows=100 width=44) (actual time=903.760..903.988 rows=0 loops=1)
         Sort Key: (max(prefix.rank)) DESC, (min(prefix.name))
         Sort Method: quicksort  Memory: 25kB
-        Buffers: shared hit=2982
-        ->  GroupAggregate  (cost=7675.78..7677.78 rows=100 width=44) (actual time=881.203..882.092 rows=0 loops=1)
+        Buffers: shared hit=3003
+        ->  GroupAggregate  (cost=7723.28..7725.28 rows=100 width=44) (actual time=903.758..903.985 rows=0 loops=1)
               Group Key: prefix.package_id
-              Buffers: shared hit=2982
-              ->  Sort  (cost=7675.78..7676.03 rows=100 width=42) (actual time=881.203..882.090 rows=0 loops=1)
+              Buffers: shared hit=3003
+              ->  Sort  (cost=7723.28..7723.53 rows=100 width=42) (actual time=903.756..903.984 rows=0 loops=1)
                     Sort Key: prefix.package_id
                     Sort Method: quicksort  Memory: 25kB
-                    Buffers: shared hit=2982
-                    ->  Append  (cost=0.00..7672.46 rows=100 width=42) (actual time=881.201..882.089 rows=0 loops=1)
-                          Buffers: shared hit=2982
-                          ->  CTE Scan on prefix  (cost=0.00..1.00 rows=50 width=44) (actual time=0.018..0.018 rows=0 loops=1)
+                    Buffers: shared hit=3003
+                    ->  Append  (cost=0.00..7719.96 rows=100 width=42) (actual time=903.755..903.981 rows=0 loops=1)
+                          Buffers: shared hit=3003
+                          ->  CTE Scan on prefix  (cost=0.00..1.00 rows=50 width=44) (actual time=0.019..0.019 rows=0 loops=1)
                                 Buffers: shared hit=6
-                          ->  Subquery Scan on fuzzy  (cost=7670.33..7670.96 rows=50 width=39) (actual time=881.182..882.069 rows=0 loops=1)
-                                Buffers: shared hit=2976
-                                ->  Limit  (cost=7670.33..7670.46 rows=50 width=39) (actual time=881.181..882.067 rows=0 loops=1)
-                                      Buffers: shared hit=2976
+                          ->  Subquery Scan on fuzzy  (cost=7717.83..7718.46 rows=50 width=39) (actual time=903.734..903.960 rows=0 loops=1)
+                                Buffers: shared hit=2997
+                                ->  Limit  (cost=7717.83..7717.96 rows=50 width=39) (actual time=903.733..903.959 rows=0 loops=1)
+                                      Buffers: shared hit=2997
                                       InitPlan 2
                                         ->  Aggregate  (cost=1.12..1.14 rows=1 width=8) (actual time=0.002..0.003 rows=1 loops=1)
                                               ->  CTE Scan on prefix prefix_1  (cost=0.00..1.00 rows=50 width=0) (actual time=0.000..0.000 rows=0 loops=1)
-                                      ->  Sort  (cost=7669.20..7669.32 rows=50 width=39) (actual time=881.180..882.065 rows=0 loops=1)
+                                      ->  Sort  (cost=7716.70..7716.82 rows=51 width=39) (actual time=903.732..903.956 rows=0 loops=1)
                                             Sort Key: (max((((CASE WHEN (lower(search_terms.name) = '-'::text) THEN 1000 WHEN (lower(search_terms.attr_path) = '-'::text) THEN 900 WHEN (lower(search_terms.name) ~~ '-%'::text) THEN 800 WHEN (lower(search_terms.attr_path) ~~ '-%'::text) THEN 700 ELSE 0 END)::double precision + ('100'::double precision * CASE WHEN (search_terms.name = search_terms.attr_path) THEN similarity(search_terms.name, '-'::text) ELSE GREATEST(similarity(search_terms.name, '-'::text), similarity(search_terms.attr_path, '-'::text)) END)) + (CASE WHEN (search_terms.top_level_attr IS NOT NULL) THEN 25 ELSE 0 END)::double precision))) DESC, search_terms.name
                                             Sort Method: quicksort  Memory: 25kB
-                                            Buffers: shared hit=2976
-                                            ->  Finalize GroupAggregate  (cost=7661.92..7667.79 rows=50 width=39) (actual time=881.178..882.062 rows=0 loops=1)
+                                            Buffers: shared hit=2997
+                                            ->  Finalize GroupAggregate  (cost=7709.19..7715.25 rows=51 width=39) (actual time=903.729..903.953 rows=0 loops=1)
                                                   Group Key: search_terms.package_id, search_terms.name
-                                                  Buffers: shared hit=2976
-                                                  ->  Gather Merge  (cost=7661.92..7667.07 rows=29 width=39) (actual time=881.176..882.060 rows=0 loops=1)
+                                                  Buffers: shared hit=2997
+                                                  ->  Gather Merge  (cost=7709.19..7714.51 rows=30 width=39) (actual time=903.728..903.952 rows=0 loops=1)
                                                         Workers Planned: 1
                                                         Workers Launched: 1
-                                                        Buffers: shared hit=2976
-                                                        ->  Partial GroupAggregate  (cost=6661.91..6663.80 rows=29 width=39) (actual time=874.077..874.078 rows=0 loops=2)
+                                                        Buffers: shared hit=2997
+                                                        ->  Partial GroupAggregate  (cost=6709.18..6711.13 rows=30 width=39) (actual time=894.473..894.475 rows=0 loops=2)
                                                               Group Key: search_terms.package_id, search_terms.name
-                                                              Buffers: shared hit=2976
-                                                              ->  Sort  (cost=6661.91..6661.99 rows=29 width=69) (actual time=874.076..874.076 rows=0 loops=2)
+                                                              Buffers: shared hit=2997
+                                                              ->  Sort  (cost=6709.18..6709.25 rows=30 width=68) (actual time=894.472..894.473 rows=0 loops=2)
                                                                     Sort Key: search_terms.package_id, search_terms.name
                                                                     Sort Method: quicksort  Memory: 25kB
-                                                                    Buffers: shared hit=2976
+                                                                    Buffers: shared hit=2997
                                                                     Worker 0:  Sort Method: quicksort  Memory: 25kB
-                                                                    ->  Result  (cost=0.00..6661.21 rows=29 width=69) (actual time=874.059..874.059 rows=0 loops=2)
+                                                                    ->  Result  (cost=0.00..6708.44 rows=30 width=68) (actual time=894.457..894.457 rows=0 loops=2)
                                                                           One-Time Filter: ((InitPlan 2).col1 < 50)
-                                                                          Buffers: shared hit=2961
-                                                                          ->  Parallel Seq Scan on search_terms  (cost=0.00..6661.21 rows=29 width=69) (actual time=874.057..874.057 rows=0 loops=2)
+                                                                          Buffers: shared hit=2982
+                                                                          ->  Parallel Seq Scan on search_terms  (cost=0.00..6708.44 rows=30 width=68) (actual time=894.455..894.455 rows=0 loops=2)
                                                                                 Filter: (((name % '-'::text) OR (attr_path % '-'::text)) AND (lower(name) !~~ '-%'::text) AND (lower(attr_path) !~~ '-%'::text))
-                                                                                Rows Removed by Filter: 125807
-                                                                                Buffers: shared hit=2961
+                                                                                Rows Removed by Filter: 127160
+                                                                                Buffers: shared hit=2982
 Planning:
   Buffers: shared hit=30
-Planning Time: 8.539 ms
-Execution Time: 882.215 ms
+Planning Time: 8.496 ms
+Execution Time: 904.123 ms
 ```
 
 ### batched fetch, latest — q=- (0 hits)
 
-Parameters: `[""]` — Execution Time: 0.109 ms
+Parameters: `[""]` — Execution Time: 0.106 ms
 
 ```
-Limit  (cost=2095.51..2095.72 rows=1 width=1377) (actual time=0.012..0.013 rows=0 loops=1)
-  ->  Unique  (cost=2095.51..2095.72 rows=1 width=1377) (actual time=0.011..0.012 rows=0 loops=1)
-        ->  Incremental Sort  (cost=2095.51..2095.69 rows=13 width=1377) (actual time=0.011..0.012 rows=0 loops=1)
+Limit  (cost=2152.04..2152.27 rows=1 width=1378) (actual time=0.012..0.013 rows=0 loops=1)
+  ->  Unique  (cost=2152.04..2152.27 rows=1 width=1378) (actual time=0.011..0.012 rows=0 loops=1)
+        ->  Incremental Sort  (cost=2152.04..2152.24 rows=14 width=1378) (actual time=0.011..0.012 rows=0 loops=1)
               Sort Key: hits.ord, variants.system, variants.attr_path
               Presorted Key: hits.ord
               Full-sort Groups: 1  Sort Method: quicksort  Average Memory: 25kB  Peak Memory: 25kB
-              ->  Nested Loop  (cost=2076.40..2095.27 rows=13 width=1377) (actual time=0.004..0.005 rows=0 loops=1)
-                    ->  Nested Loop  (cost=2076.12..2091.40 rows=13 width=1322) (actual time=0.004..0.005 rows=0 loops=1)
-                          ->  Nested Loop  (cost=2075.70..2084.79 rows=13 width=339) (actual time=0.004..0.005 rows=0 loops=1)
+              ->  Nested Loop  (cost=2131.84..2151.78 rows=14 width=1378) (actual time=0.005..0.005 rows=0 loops=1)
+                    ->  Nested Loop  (cost=2131.56..2147.61 rows=14 width=1323) (actual time=0.004..0.005 rows=0 loops=1)
+                          ->  Nested Loop  (cost=2131.14..2140.36 rows=14 width=340) (actual time=0.004..0.005 rows=0 loops=1)
                                 Join Filter: (variants.version_id = versions_1.id)
-                                ->  Nested Loop  (cost=2075.27..2083.34 rows=1 width=53) (actual time=0.004..0.004 rows=0 loops=1)
-                                      ->  Nested Loop  (cost=2074.85..2082.90 rows=1 width=30) (actual time=0.004..0.004 rows=0 loops=1)
-                                            ->  Nested Loop  (cost=2074.42..2074.45 rows=1 width=12) (actual time=0.004..0.004 rows=0 loops=1)
-                                                  ->  Function Scan on unnest hits  (cost=0.00..0.01 rows=1 width=12) (actual time=0.003..0.003 rows=0 loops=1)
-                                                  ->  Limit  (cost=2074.42..2074.42 rows=1 width=24) (never executed)
-                                                        ->  Sort  (cost=2074.42..2074.63 rows=85 width=24) (never executed)
+                                ->  Nested Loop  (cost=2130.71..2138.79 rows=1 width=53) (actual time=0.004..0.005 rows=0 loops=1)
+                                      ->  Nested Loop  (cost=2130.29..2138.34 rows=1 width=30) (actual time=0.004..0.004 rows=0 loops=1)
+                                            ->  Nested Loop  (cost=2129.86..2129.90 rows=1 width=12) (actual time=0.004..0.004 rows=0 loops=1)
+                                                  ->  Function Scan on unnest hits  (cost=0.00..0.01 rows=1 width=12) (actual time=0.004..0.004 rows=0 loops=1)
+                                                  ->  Limit  (cost=2129.86..2129.86 rows=1 width=24) (never executed)
+                                                        ->  Sort  (cost=2129.86..2130.06 rows=79 width=24) (never executed)
                                                               Sort Key: (EXISTS(SubPlan 1)) DESC, ((SubPlan 2)) DESC, versions_1.sort_key DESC
-                                                              ->  Nested Loop  (cost=0.86..2073.99 rows=85 width=24) (never executed)
-                                                                    ->  Index Scan using versions_semver_idx on versions versions_1  (cost=0.43..66.18 rows=32 width=19) (never executed)
-                                                                          Index Cond: (package_id = hits.package_id)
-                                                                          Filter: (NOT prerelease)
-                                                                    ->  Index Scan using variants_identity_key on variants variants_1  (cost=0.43..32.45 rows=13 width=8) (never executed)
+                                                              ->  Nested Loop  (cost=0.86..2129.47 rows=79 width=24) (never executed)
+                                                                    ->  Index Scan using versions_latest_idx on versions versions_1  (cost=0.43..66.26 rows=32 width=19) (never executed)
+                                                                          Index Cond: ((package_id = hits.package_id) AND (prerelease = false))
+                                                                    ->  Index Scan using variants_identity_key on variants variants_1  (cost=0.43..36.09 rows=14 width=8) (never executed)
                                                                           Index Cond: (version_id = versions_1.id)
                                                                     SubPlan 1
-                                                                      ->  Index Scan using variants_identity_key on variants b  (cost=0.43..32.45 rows=13 width=0) (never executed)
+                                                                      ->  Index Scan using variants_identity_key on variants b  (cost=0.43..36.09 rows=14 width=0) (never executed)
                                                                             Index Cond: (version_id = versions_1.id)
                                                                             Filter: (NOT broken)
                                                                     SubPlan 2
@@ -1281,301 +1272,301 @@ Limit  (cost=2095.51..2095.72 rows=1 width=1377) (actual time=0.012..0.013 rows=
                                                   Index Cond: (id = versions_1.id)
                                       ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (never executed)
                                             Index Cond: (id = versions.package_id)
-                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.28 rows=13 width=298) (never executed)
+                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.40 rows=14 width=299) (never executed)
                                       Index Cond: (version_id = versions.id)
-                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (never executed)
+                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (never executed)
                                 Index Cond: (id = variants.meta_id)
                     ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (never executed)
                           Index Cond: (seq = variants.commit_seq)
 Planning:
-  Buffers: shared hit=112
-Planning Time: 18.575 ms
-Execution Time: 0.109 ms
+  Buffers: shared hit=115
+Planning Time: 18.195 ms
+Execution Time: 0.106 ms
 ```
 
 ### batched fetch, all versions — q=- (0 hits)
 
-Parameters: `[""]` — Execution Time: 0.094 ms
+Parameters: `[""]` — Execution Time: 0.079 ms
 
 ```
-Limit  (cost=126.65..128.37 rows=85 width=1392) (actual time=0.017..0.018 rows=0 loops=1)
-  ->  Unique  (cost=126.65..128.37 rows=85 width=1392) (actual time=0.016..0.016 rows=0 loops=1)
-        ->  Incremental Sort  (cost=126.65..127.73 rows=85 width=1392) (actual time=0.015..0.016 rows=0 loops=1)
+Limit  (cost=130.62..132.28 rows=82 width=1393) (actual time=0.014..0.015 rows=0 loops=1)
+  ->  Unique  (cost=130.62..132.28 rows=82 width=1393) (actual time=0.013..0.014 rows=0 loops=1)
+        ->  Incremental Sort  (cost=130.62..131.67 rows=82 width=1393) (actual time=0.013..0.014 rows=0 loops=1)
               Sort Key: hits.ord, versions.sort_key DESC, versions.version, variants.system, variants.attr_path
               Presorted Key: hits.ord
               Full-sort Groups: 1  Sort Method: quicksort  Average Memory: 25kB  Peak Memory: 25kB
-              ->  Nested Loop  (cost=1.98..123.92 rows=85 width=1392) (actual time=0.004..0.005 rows=0 loops=1)
-                    ->  Nested Loop  (cost=1.70..98.63 rows=85 width=1337) (actual time=0.004..0.004 rows=0 loops=1)
-                          ->  Nested Loop  (cost=1.28..55.38 rows=85 width=354) (actual time=0.004..0.004 rows=0 loops=1)
-                                ->  Nested Loop  (cost=0.85..10.21 rows=32 width=64) (actual time=0.004..0.004 rows=0 loops=1)
+              ->  Nested Loop  (cost=1.98..128.02 rows=82 width=1393) (actual time=0.004..0.005 rows=0 loops=1)
+                    ->  Nested Loop  (cost=1.70..103.62 rows=82 width=1338) (actual time=0.004..0.004 rows=0 loops=1)
+                          ->  Nested Loop  (cost=1.28..61.18 rows=82 width=355) (actual time=0.004..0.004 rows=0 loops=1)
+                                ->  Nested Loop  (cost=0.85..10.24 rows=33 width=64) (actual time=0.004..0.004 rows=0 loops=1)
                                       Join Filter: (versions.package_id = hits.package_id)
-                                      ->  Nested Loop  (cost=0.42..8.45 rows=1 width=43) (actual time=0.003..0.004 rows=0 loops=1)
+                                      ->  Nested Loop  (cost=0.42..8.45 rows=1 width=43) (actual time=0.003..0.003 rows=0 loops=1)
                                             ->  Function Scan on unnest hits  (cost=0.00..0.01 rows=1 width=12) (actual time=0.003..0.003 rows=0 loops=1)
                                             ->  Index Scan using packages_pkey on packages  (cost=0.42..8.44 rows=1 width=31) (never executed)
                                                   Index Cond: (id = hits.package_id)
-                                      ->  Index Scan using versions_package_version_key on versions  (cost=0.43..1.36 rows=32 width=33) (never executed)
+                                      ->  Index Scan using versions_package_version_key on versions  (cost=0.43..1.38 rows=33 width=33) (never executed)
                                             Index Cond: (package_id = packages.id)
-                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.28 rows=13 width=298) (never executed)
+                                ->  Index Scan using variants_identity_key on variants  (cost=0.43..1.40 rows=14 width=299) (never executed)
                                       Index Cond: (version_id = versions.id)
-                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (never executed)
+                          ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (never executed)
                                 Index Cond: (id = variants.meta_id)
                     ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (never executed)
                           Index Cond: (seq = variants.commit_seq)
 Planning:
-  Buffers: shared hit=68
-Planning Time: 11.632 ms
-Execution Time: 0.094 ms
+  Buffers: shared hit=69
+Planning Time: 10.085 ms
+Execution Time: 0.079 ms
 ```
 
 ## Name lookups (/v2/resolve, /v1/resolve, /v2/pkg, /v1/pkg)
 
 ### pick latest version — name=go
 
-Parameters: `["go"]` — Execution Time: 8.102 ms
+Parameters: `["go"]` — Execution Time: 8.210 ms
 
 ```
-Limit  (cost=2741.78..2741.78 rows=1 width=24) (actual time=8.012..8.016 rows=1 loops=1)
-  Buffers: shared hit=15153
-  ->  Sort  (cost=2741.78..2742.09 rows=124 width=24) (actual time=8.011..8.014 rows=1 loops=1)
+Limit  (cost=2821.09..2821.09 rows=1 width=24) (actual time=8.121..8.125 rows=1 loops=1)
+  Buffers: shared hit=15706
+  ->  Sort  (cost=2821.09..2821.40 rows=125 width=24) (actual time=8.119..8.123 rows=1 loops=1)
         Sort Key: (EXISTS(SubPlan 1)) DESC, ((SubPlan 2)) DESC, versions.sort_key DESC
         Sort Method: top-N heapsort  Memory: 25kB
-        Buffers: shared hit=15153
-        ->  Nested Loop  (cost=163.70..2741.16 rows=124 width=24) (actual time=1.095..7.890 rows=647 loops=1)
-              Buffers: shared hit=15153
-              ->  Nested Loop  (cost=163.28..1277.92 rows=124 width=27) (actual time=1.075..3.831 rows=647 loops=1)
-                    Buffers: shared hit=6735
-                    ->  Nested Loop  (cost=162.85..1219.61 rows=125 width=8) (actual time=1.068..2.589 rows=722 loops=1)
-                          Buffers: shared hit=3847
-                          ->  HashAggregate  (cost=162.42..163.67 rows=125 width=4) (actual time=1.063..1.169 rows=722 loops=1)
+        Buffers: shared hit=15706
+        ->  Nested Loop  (cost=211.57..2820.47 rows=125 width=24) (actual time=1.200..7.982 rows=671 loops=1)
+              Buffers: shared hit=15706
+              ->  Nested Loop  (cost=211.15..1334.90 rows=125 width=27) (actual time=1.180..3.838 rows=671 loops=1)
+                    Buffers: shared hit=6972
+                    ->  Nested Loop  (cost=210.72..1275.94 rows=126 width=8) (actual time=1.173..2.617 rows=746 loops=1)
+                          Buffers: shared hit=3988
+                          ->  HashAggregate  (cost=210.29..211.55 rows=126 width=4) (actual time=1.167..1.279 rows=746 loops=1)
                                 Group Key: va.id
                                 Batches: 1  Memory Usage: 89kB
-                                Buffers: shared hit=959
-                                ->  Append  (cost=1.28..162.11 rows=125 width=4) (actual time=0.031..0.889 rows=979 loops=1)
-                                      Buffers: shared hit=959
-                                      ->  Nested Loop  (cost=1.28..83.40 rows=16 width=4) (actual time=0.031..0.739 rows=722 loops=1)
-                                            Buffers: shared hit=898
-                                            ->  Nested Loop  (cost=0.85..74.94 rows=6 width=4) (actual time=0.025..0.093 rows=191 loops=1)
-                                                  Buffers: shared hit=23
-                                                  ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.013..0.014 rows=1 loops=1)
+                                Buffers: shared hit=1004
+                                ->  Append  (cost=1.28..209.98 rows=126 width=4) (actual time=0.031..0.984 rows=1012 loops=1)
+                                      Buffers: shared hit=1004
+                                      ->  Nested Loop  (cost=1.28..86.07 rows=15 width=4) (actual time=0.031..0.823 rows=746 loops=1)
+                                            Buffers: shared hit=934
+                                            ->  Nested Loop  (cost=0.85..76.81 rows=6 width=4) (actual time=0.025..0.101 rows=196 loops=1)
+                                                  Buffers: shared hit=28
+                                                  ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.013..0.013 rows=1 loops=1)
                                                         Index Cond: (lower(name) = 'go'::text)
                                                         Buffers: shared hit=4
-                                                  ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..66.18 rows=32 width=8) (actual time=0.009..0.055 rows=191 loops=1)
+                                                  ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..68.04 rows=33 width=8) (actual time=0.009..0.063 rows=196 loops=1)
                                                         Index Cond: (package_id = p.id)
-                                                        Buffers: shared hit=19
-                                            ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.28 rows=13 width=8) (actual time=0.002..0.003 rows=4 loops=191)
+                                                        Buffers: shared hit=24
+                                            ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.40 rows=14 width=8) (actual time=0.002..0.003 rows=4 loops=196)
                                                   Index Cond: (version_id = ve.id)
-                                                  Buffers: shared hit=875
-                                      ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..78.08 rows=109 width=4) (actual time=0.007..0.075 rows=257 loops=1)
+                                                  Buffers: shared hit=906
+                                      ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..123.28 rows=111 width=4) (actual time=0.007..0.081 rows=266 loops=1)
                                             Index Cond: (attr_path = 'go'::text)
-                                            Buffers: shared hit=61
-                          ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=8) (actual time=0.002..0.002 rows=1 loops=722)
+                                            Buffers: shared hit=70
+                          ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=8) (actual time=0.001..0.001 rows=1 loops=746)
                                 Index Cond: (id = va.id)
-                                Buffers: shared hit=2888
-                    ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=23) (actual time=0.001..0.001 rows=1 loops=722)
+                                Buffers: shared hit=2984
+                    ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=23) (actual time=0.001..0.001 rows=1 loops=746)
                           Index Cond: (id = variants.version_id)
                           Filter: (NOT prerelease)
                           Rows Removed by Filter: 0
-                          Buffers: shared hit=2888
-              ->  Index Only Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=647)
+                          Buffers: shared hit=2984
+              ->  Index Only Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=671)
                     Index Cond: (id = versions.package_id)
-                    Heap Fetches: 647
-                    Buffers: shared hit=3236
+                    Heap Fetches: 671
+                    Buffers: shared hit=3356
               SubPlan 1
-                ->  Index Scan using variants_identity_key on variants b  (cost=0.43..32.45 rows=13 width=0) (actual time=0.002..0.002 rows=1 loops=647)
+                ->  Index Scan using variants_identity_key on variants b  (cost=0.43..36.09 rows=14 width=0) (actual time=0.002..0.002 rows=1 loops=671)
                       Index Cond: (version_id = versions.id)
                       Filter: (NOT broken)
-                      Buffers: shared hit=2588
+                      Buffers: shared hit=2684
               SubPlan 2
-                ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=647)
-                      Buffers: shared hit=2594
-                      ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=647)
+                ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=671)
+                      Buffers: shared hit=2694
+                      ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=671)
                             Index Cond: (variant_id = variants.id)
                             Filter: (NOT seeded)
                             Rows Removed by Filter: 1
-                            Buffers: shared hit=2594
+                            Buffers: shared hit=2694
 Planning:
-  Buffers: shared hit=92
-Planning Time: 14.760 ms
-Execution Time: 8.102 ms
+  Buffers: shared hit=94
+Planning Time: 14.788 ms
+Execution Time: 8.210 ms
 ```
 
 ### pick latest version — name=python
 
-Parameters: `["python"]` — Execution Time: 6.097 ms
+Parameters: `["python"]` — Execution Time: 6.205 ms
 
 ```
-Limit  (cost=2741.78..2741.78 rows=1 width=24) (actual time=6.007..6.011 rows=1 loops=1)
-  Buffers: shared hit=11360
-  ->  Sort  (cost=2741.78..2742.09 rows=124 width=24) (actual time=6.005..6.009 rows=1 loops=1)
+Limit  (cost=2821.09..2821.09 rows=1 width=24) (actual time=6.112..6.116 rows=1 loops=1)
+  Buffers: shared hit=11805
+  ->  Sort  (cost=2821.09..2821.40 rows=125 width=24) (actual time=6.110..6.114 rows=1 loops=1)
         Sort Key: (EXISTS(SubPlan 1)) DESC, ((SubPlan 2)) DESC, versions.sort_key DESC
         Sort Method: top-N heapsort  Memory: 25kB
-        Buffers: shared hit=11360
-        ->  Nested Loop  (cost=163.70..2741.16 rows=124 width=24) (actual time=0.847..5.922 rows=415 loops=1)
-              Buffers: shared hit=11360
-              ->  Nested Loop  (cost=163.28..1277.92 rows=124 width=27) (actual time=0.823..3.276 rows=415 loops=1)
-                    Buffers: shared hit=5955
-                    ->  Nested Loop  (cost=162.85..1219.61 rows=125 width=8) (actual time=0.817..2.095 rows=648 loops=1)
-                          Buffers: shared hit=3363
-                          ->  HashAggregate  (cost=162.42..163.67 rows=125 width=4) (actual time=0.806..0.902 rows=648 loops=1)
+        Buffers: shared hit=11805
+        ->  Nested Loop  (cost=211.57..2820.47 rows=125 width=24) (actual time=0.895..6.023 rows=433 loops=1)
+              Buffers: shared hit=11805
+              ->  Nested Loop  (cost=211.15..1334.90 rows=125 width=27) (actual time=0.874..3.357 rows=433 loops=1)
+                    Buffers: shared hit=6166
+                    ->  Nested Loop  (cost=210.72..1275.94 rows=126 width=8) (actual time=0.867..2.185 rows=669 loops=1)
+                          Buffers: shared hit=3490
+                          ->  HashAggregate  (cost=210.29..211.55 rows=126 width=4) (actual time=0.861..0.968 rows=669 loops=1)
                                 Group Key: va.id
                                 Batches: 1  Memory Usage: 89kB
-                                Buffers: shared hit=771
-                                ->  Append  (cost=1.28..162.11 rows=125 width=4) (actual time=0.029..0.677 rows=651 loops=1)
-                                      Buffers: shared hit=771
-                                      ->  Nested Loop  (cost=1.28..83.40 rows=16 width=4) (actual time=0.029..0.619 rows=648 loops=1)
-                                            Buffers: shared hit=766
-                                            ->  Nested Loop  (cost=0.85..74.94 rows=6 width=4) (actual time=0.022..0.094 rows=177 loops=1)
-                                                  Buffers: shared hit=23
-                                                  ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.013..0.013 rows=1 loops=1)
+                                Buffers: shared hit=814
+                                ->  Append  (cost=1.28..209.98 rows=126 width=4) (actual time=0.029..0.728 rows=672 loops=1)
+                                      Buffers: shared hit=814
+                                      ->  Nested Loop  (cost=1.28..86.07 rows=15 width=4) (actual time=0.029..0.666 rows=669 loops=1)
+                                            Buffers: shared hit=809
+                                            ->  Nested Loop  (cost=0.85..76.81 rows=6 width=4) (actual time=0.021..0.096 rows=183 loops=1)
+                                                  Buffers: shared hit=30
+                                                  ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.012..0.013 rows=1 loops=1)
                                                         Index Cond: (lower(name) = 'python'::text)
                                                         Buffers: shared hit=4
-                                                  ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..66.18 rows=32 width=8) (actual time=0.007..0.054 rows=177 loops=1)
+                                                  ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..68.04 rows=33 width=8) (actual time=0.007..0.059 rows=183 loops=1)
                                                         Index Cond: (package_id = p.id)
-                                                        Buffers: shared hit=19
-                                            ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.28 rows=13 width=8) (actual time=0.002..0.002 rows=4 loops=177)
+                                                        Buffers: shared hit=26
+                                            ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.40 rows=14 width=8) (actual time=0.002..0.002 rows=4 loops=183)
                                                   Index Cond: (version_id = ve.id)
-                                                  Buffers: shared hit=743
-                                      ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..78.08 rows=109 width=4) (actual time=0.007..0.008 rows=3 loops=1)
+                                                  Buffers: shared hit=779
+                                      ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..123.28 rows=111 width=4) (actual time=0.007..0.008 rows=3 loops=1)
                                             Index Cond: (attr_path = 'python'::text)
                                             Buffers: shared hit=5
-                          ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=8) (actual time=0.002..0.002 rows=1 loops=648)
+                          ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=8) (actual time=0.001..0.001 rows=1 loops=669)
                                 Index Cond: (id = va.id)
-                                Buffers: shared hit=2592
-                    ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=23) (actual time=0.002..0.002 rows=1 loops=648)
+                                Buffers: shared hit=2676
+                    ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=23) (actual time=0.001..0.001 rows=1 loops=669)
                           Index Cond: (id = variants.version_id)
                           Filter: (NOT prerelease)
                           Rows Removed by Filter: 0
-                          Buffers: shared hit=2592
-              ->  Index Only Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=415)
+                          Buffers: shared hit=2676
+              ->  Index Only Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=433)
                     Index Cond: (id = versions.package_id)
-                    Heap Fetches: 415
-                    Buffers: shared hit=2076
+                    Heap Fetches: 433
+                    Buffers: shared hit=2166
               SubPlan 1
-                ->  Index Scan using variants_identity_key on variants b  (cost=0.43..32.45 rows=13 width=0) (actual time=0.002..0.002 rows=1 loops=415)
+                ->  Index Scan using variants_identity_key on variants b  (cost=0.43..36.09 rows=14 width=0) (actual time=0.002..0.002 rows=1 loops=433)
                       Index Cond: (version_id = versions.id)
                       Filter: (NOT broken)
-                      Buffers: shared hit=1660
+                      Buffers: shared hit=1732
               SubPlan 2
-                ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=415)
-                      Buffers: shared hit=1669
-                      ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=415)
+                ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=433)
+                      Buffers: shared hit=1741
+                      ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=433)
                             Index Cond: (variant_id = variants.id)
                             Filter: (NOT seeded)
                             Rows Removed by Filter: 1
-                            Buffers: shared hit=1669
+                            Buffers: shared hit=1741
 Planning:
-  Buffers: shared hit=92
-Planning Time: 14.807 ms
-Execution Time: 6.097 ms
+  Buffers: shared hit=94
+Planning Time: 14.453 ms
+Execution Time: 6.205 ms
 ```
 
 ### pick latest version — name=python311
 
-Parameters: `["python311"]` — Execution Time: 0.915 ms
+Parameters: `["python311"]` — Execution Time: 0.888 ms
 
 ```
-Limit  (cost=2741.78..2741.78 rows=1 width=24) (actual time=0.830..0.832 rows=1 loops=1)
-  Buffers: shared hit=1378
-  ->  Sort  (cost=2741.78..2742.09 rows=124 width=24) (actual time=0.829..0.831 rows=1 loops=1)
+Limit  (cost=2821.09..2821.09 rows=1 width=24) (actual time=0.801..0.803 rows=1 loops=1)
+  Buffers: shared hit=1444
+  ->  Sort  (cost=2821.09..2821.40 rows=125 width=24) (actual time=0.800..0.802 rows=1 loops=1)
         Sort Key: (EXISTS(SubPlan 1)) DESC, ((SubPlan 2)) DESC, versions.sort_key DESC
         Sort Method: top-N heapsort  Memory: 25kB
-        Buffers: shared hit=1378
-        ->  Nested Loop  (cost=163.70..2741.16 rows=124 width=24) (actual time=0.120..0.813 rows=51 loops=1)
-              Buffers: shared hit=1378
-              ->  Nested Loop  (cost=163.28..1277.92 rows=124 width=27) (actual time=0.094..0.445 rows=51 loops=1)
-                    Buffers: shared hit=711
-                    ->  Nested Loop  (cost=162.85..1219.61 rows=125 width=8) (actual time=0.086..0.277 rows=87 loops=1)
-                          Buffers: shared hit=363
-                          ->  HashAggregate  (cost=162.42..163.67 rows=125 width=4) (actual time=0.078..0.092 rows=87 loops=1)
+        Buffers: shared hit=1444
+        ->  Nested Loop  (cost=211.57..2820.47 rows=125 width=24) (actual time=0.122..0.783 rows=54 loops=1)
+              Buffers: shared hit=1444
+              ->  Nested Loop  (cost=211.15..1334.90 rows=125 width=27) (actual time=0.097..0.420 rows=54 loops=1)
+                    Buffers: shared hit=738
+                    ->  Nested Loop  (cost=210.72..1275.94 rows=126 width=8) (actual time=0.090..0.264 rows=90 loops=1)
+                          Buffers: shared hit=378
+                          ->  HashAggregate  (cost=210.29..211.55 rows=126 width=4) (actual time=0.081..0.094 rows=90 loops=1)
                                 Group Key: va.id
                                 Batches: 1  Memory Usage: 40kB
-                                Buffers: shared hit=15
-                                ->  Append  (cost=1.28..162.11 rows=125 width=4) (actual time=0.022..0.061 rows=87 loops=1)
-                                      Buffers: shared hit=15
-                                      ->  Nested Loop  (cost=1.28..83.40 rows=16 width=4) (actual time=0.012..0.012 rows=0 loops=1)
+                                Buffers: shared hit=18
+                                ->  Append  (cost=1.28..209.98 rows=126 width=4) (actual time=0.021..0.064 rows=90 loops=1)
+                                      Buffers: shared hit=18
+                                      ->  Nested Loop  (cost=1.28..86.07 rows=15 width=4) (actual time=0.011..0.012 rows=0 loops=1)
                                             Buffers: shared hit=3
-                                            ->  Nested Loop  (cost=0.85..74.94 rows=6 width=4) (actual time=0.011..0.012 rows=0 loops=1)
+                                            ->  Nested Loop  (cost=0.85..76.81 rows=6 width=4) (actual time=0.011..0.011 rows=0 loops=1)
                                                   Buffers: shared hit=3
                                                   ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.011..0.011 rows=0 loops=1)
                                                         Index Cond: (lower(name) = 'python311'::text)
                                                         Buffers: shared hit=3
-                                                  ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..66.18 rows=32 width=8) (never executed)
+                                                  ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..68.04 rows=33 width=8) (never executed)
                                                         Index Cond: (package_id = p.id)
-                                            ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.28 rows=13 width=8) (never executed)
+                                            ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.40 rows=14 width=8) (never executed)
                                                   Index Cond: (version_id = ve.id)
-                                      ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..78.08 rows=109 width=4) (actual time=0.010..0.041 rows=87 loops=1)
+                                      ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..123.28 rows=111 width=4) (actual time=0.010..0.045 rows=90 loops=1)
                                             Index Cond: (attr_path = 'python311'::text)
-                                            Buffers: shared hit=12
-                          ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=8) (actual time=0.002..0.002 rows=1 loops=87)
+                                            Buffers: shared hit=15
+                          ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=8) (actual time=0.002..0.002 rows=1 loops=90)
                                 Index Cond: (id = va.id)
-                                Buffers: shared hit=348
-                    ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=23) (actual time=0.002..0.002 rows=1 loops=87)
+                                Buffers: shared hit=360
+                    ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=23) (actual time=0.001..0.001 rows=1 loops=90)
                           Index Cond: (id = variants.version_id)
                           Filter: (NOT prerelease)
                           Rows Removed by Filter: 0
-                          Buffers: shared hit=348
-              ->  Index Only Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=51)
+                          Buffers: shared hit=360
+              ->  Index Only Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=54)
                     Index Cond: (id = versions.package_id)
-                    Heap Fetches: 51
-                    Buffers: shared hit=256
+                    Heap Fetches: 54
+                    Buffers: shared hit=271
               SubPlan 1
-                ->  Index Scan using variants_identity_key on variants b  (cost=0.43..32.45 rows=13 width=0) (actual time=0.002..0.002 rows=1 loops=51)
+                ->  Index Scan using variants_identity_key on variants b  (cost=0.43..36.09 rows=14 width=0) (actual time=0.002..0.002 rows=1 loops=54)
                       Index Cond: (version_id = versions.id)
                       Filter: (NOT broken)
-                      Buffers: shared hit=204
+                      Buffers: shared hit=216
               SubPlan 2
-                ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=51)
-                      Buffers: shared hit=207
-                      ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=51)
+                ->  Aggregate  (cost=8.45..8.46 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=54)
+                      Buffers: shared hit=219
+                      ->  Index Scan using variant_ranges_variant_id_first_seq_pk on variant_ranges r  (cost=0.43..8.45 rows=1 width=4) (actual time=0.002..0.002 rows=0 loops=54)
                             Index Cond: (variant_id = variants.id)
                             Filter: (NOT seeded)
                             Rows Removed by Filter: 1
-                            Buffers: shared hit=207
+                            Buffers: shared hit=219
 Planning:
-  Buffers: shared hit=92
-Planning Time: 14.833 ms
-Execution Time: 0.915 ms
+  Buffers: shared hit=94
+Planning Time: 15.652 ms
+Execution Time: 0.888 ms
 ```
 
 ### pick latest version — name=hello
 
-Parameters: `["hello"]` — Execution Time: 0.406 ms
+Parameters: `["hello"]` — Execution Time: 0.381 ms
 
 ```
-Limit  (cost=2741.78..2741.78 rows=1 width=24) (actual time=0.322..0.324 rows=1 loops=1)
-  Buffers: shared hit=443
-  ->  Sort  (cost=2741.78..2742.09 rows=124 width=24) (actual time=0.321..0.322 rows=1 loops=1)
+Limit  (cost=2821.09..2821.09 rows=1 width=24) (actual time=0.299..0.301 rows=1 loops=1)
+  Buffers: shared hit=444
+  ->  Sort  (cost=2821.09..2821.40 rows=125 width=24) (actual time=0.298..0.300 rows=1 loops=1)
         Sort Key: (EXISTS(SubPlan 1)) DESC, ((SubPlan 2)) DESC, versions.sort_key DESC
         Sort Method: top-N heapsort  Memory: 25kB
-        Buffers: shared hit=443
-        ->  Nested Loop  (cost=163.70..2741.16 rows=124 width=24) (actual time=0.122..0.310 rows=19 loops=1)
-              Buffers: shared hit=443
-              ->  Nested Loop  (cost=163.28..1277.92 rows=124 width=27) (actual time=0.098..0.167 rows=19 loops=1)
-                    Buffers: shared hit=192
-                    ->  Nested Loop  (cost=162.85..1219.61 rows=125 width=8) (actual time=0.086..0.124 rows=19 loops=1)
-                          Buffers: shared hit=116
-                          ->  HashAggregate  (cost=162.42..163.67 rows=125 width=4) (actual time=0.081..0.085 rows=19 loops=1)
+        Buffers: shared hit=444
+        ->  Nested Loop  (cost=211.57..2820.47 rows=125 width=24) (actual time=0.112..0.288 rows=19 loops=1)
+              Buffers: shared hit=444
+              ->  Nested Loop  (cost=211.15..1334.90 rows=125 width=27) (actual time=0.090..0.155 rows=19 loops=1)
+                    Buffers: shared hit=193
+                    ->  Nested Loop  (cost=210.72..1275.94 rows=126 width=8) (actual time=0.083..0.118 rows=19 loops=1)
+                          Buffers: shared hit=117
+                          ->  HashAggregate  (cost=210.29..211.55 rows=126 width=4) (actual time=0.077..0.081 rows=19 loops=1)
                                 Group Key: va.id
                                 Batches: 1  Memory Usage: 40kB
-                                Buffers: shared hit=40
-                                ->  Append  (cost=1.28..162.11 rows=125 width=4) (actual time=0.033..0.070 rows=38 loops=1)
-                                      Buffers: shared hit=40
-                                      ->  Nested Loop  (cost=1.28..83.40 rows=16 width=4) (actual time=0.032..0.055 rows=19 loops=1)
+                                Buffers: shared hit=41
+                                ->  Append  (cost=1.28..209.98 rows=126 width=4) (actual time=0.029..0.067 rows=38 loops=1)
+                                      Buffers: shared hit=41
+                                      ->  Nested Loop  (cost=1.28..86.07 rows=15 width=4) (actual time=0.029..0.052 rows=19 loops=1)
                                             Buffers: shared hit=33
-                                            ->  Nested Loop  (cost=0.85..74.94 rows=6 width=4) (actual time=0.026..0.028 rows=5 loops=1)
+                                            ->  Nested Loop  (cost=0.85..76.81 rows=6 width=4) (actual time=0.023..0.025 rows=5 loops=1)
                                                   Buffers: shared hit=8
-                                                  ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.016..0.016 rows=1 loops=1)
+                                                  ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.013..0.013 rows=1 loops=1)
                                                         Index Cond: (lower(name) = 'hello'::text)
                                                         Buffers: shared hit=4
-                                                  ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..66.18 rows=32 width=8) (actual time=0.008..0.009 rows=5 loops=1)
+                                                  ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..68.04 rows=33 width=8) (actual time=0.007..0.008 rows=5 loops=1)
                                                         Index Cond: (package_id = p.id)
                                                         Buffers: shared hit=4
-                                            ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.28 rows=13 width=8) (actual time=0.003..0.005 rows=4 loops=5)
+                                            ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.40 rows=14 width=8) (actual time=0.003..0.005 rows=4 loops=5)
                                                   Index Cond: (version_id = ve.id)
                                                   Buffers: shared hit=25
-                                      ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..78.08 rows=109 width=4) (actual time=0.007..0.012 rows=19 loops=1)
+                                      ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..123.28 rows=111 width=4) (actual time=0.006..0.011 rows=19 loops=1)
                                             Index Cond: (attr_path = 'hello'::text)
-                                            Buffers: shared hit=7
+                                            Buffers: shared hit=8
                           ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=8) (actual time=0.002..0.002 rows=1 loops=19)
                                 Index Cond: (id = va.id)
                                 Buffers: shared hit=76
@@ -1588,7 +1579,7 @@ Limit  (cost=2741.78..2741.78 rows=1 width=24) (actual time=0.322..0.324 rows=1 
                     Heap Fetches: 19
                     Buffers: shared hit=96
               SubPlan 1
-                ->  Index Scan using variants_identity_key on variants b  (cost=0.43..32.45 rows=13 width=0) (actual time=0.002..0.002 rows=1 loops=19)
+                ->  Index Scan using variants_identity_key on variants b  (cost=0.43..36.09 rows=14 width=0) (actual time=0.002..0.002 rows=1 loops=19)
                       Index Cond: (version_id = versions.id)
                       Filter: (NOT broken)
                       Buffers: shared hit=76
@@ -1601,262 +1592,254 @@ Limit  (cost=2741.78..2741.78 rows=1 width=24) (actual time=0.322..0.324 rows=1 
                             Rows Removed by Filter: 1
                             Buffers: shared hit=79
 Planning:
-  Buffers: shared hit=92
-Planning Time: 15.379 ms
-Execution Time: 0.406 ms
+  Buffers: shared hit=94
+Planning Time: 15.132 ms
+Execution Time: 0.381 ms
 ```
 
 ### every version — name=go
 
-Parameters: `["go"]` — Execution Time: 8.774 ms
+Parameters: `["go"]` — Execution Time: 8.677 ms
 
 ```
-Limit  (cost=1438.66..1438.97 rows=125 width=1384) (actual time=8.404..8.534 rows=722 loops=1)
-  Buffers: shared hit=14677
-  ->  Sort  (cost=1438.66..1438.97 rows=125 width=1384) (actual time=8.402..8.474 rows=722 loops=1)
-        Sort Key: versions.sort_key DESC, variants.system, variants.attr_path
-        Sort Method: quicksort  Memory: 740kB
-        Buffers: shared hit=14677
-        ->  Nested Loop  (cost=164.40..1434.31 rows=125 width=1384) (actual time=1.197..7.575 rows=722 loops=1)
-              Buffers: shared hit=14677
-              ->  Nested Loop  (cost=164.12..1397.11 rows=125 width=1329) (actual time=1.192..6.506 rows=722 loops=1)
-                    Buffers: shared hit=12511
-                    ->  Nested Loop  (cost=163.70..1333.50 rows=125 width=346) (actual time=1.185..5.310 rows=722 loops=1)
-                          Buffers: shared hit=9623
-                          ->  Nested Loop  (cost=163.28..1277.92 rows=125 width=323) (actual time=1.180..4.179 rows=722 loops=1)
-                                Buffers: shared hit=6735
-                                ->  Nested Loop  (cost=162.85..1219.61 rows=125 width=298) (actual time=1.175..2.931 rows=722 loops=1)
-                                      Buffers: shared hit=3847
-                                      ->  HashAggregate  (cost=162.42..163.67 rows=125 width=4) (actual time=1.168..1.287 rows=722 loops=1)
-                                            Group Key: va.id
-                                            Batches: 1  Memory Usage: 89kB
-                                            Buffers: shared hit=959
-                                            ->  Append  (cost=1.28..162.11 rows=125 width=4) (actual time=0.032..0.980 rows=979 loops=1)
-                                                  Buffers: shared hit=959
-                                                  ->  Nested Loop  (cost=1.28..83.40 rows=16 width=4) (actual time=0.032..0.818 rows=722 loops=1)
-                                                        Buffers: shared hit=898
-                                                        ->  Nested Loop  (cost=0.85..74.94 rows=6 width=4) (actual time=0.026..0.099 rows=191 loops=1)
-                                                              Buffers: shared hit=23
-                                                              ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.014..0.014 rows=1 loops=1)
-                                                                    Index Cond: (lower(name) = 'go'::text)
-                                                                    Buffers: shared hit=4
-                                                              ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..66.18 rows=32 width=8) (actual time=0.010..0.059 rows=191 loops=1)
-                                                                    Index Cond: (package_id = p.id)
-                                                                    Buffers: shared hit=19
-                                                        ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.28 rows=13 width=8) (actual time=0.002..0.003 rows=4 loops=191)
-                                                              Index Cond: (version_id = ve.id)
-                                                              Buffers: shared hit=875
-                                                  ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..78.08 rows=109 width=4) (actual time=0.009..0.083 rows=257 loops=1)
-                                                        Index Cond: (attr_path = 'go'::text)
-                                                        Buffers: shared hit=61
-                                      ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=302) (actual time=0.002..0.002 rows=1 loops=722)
-                                            Index Cond: (id = va.id)
-                                            Buffers: shared hit=2888
-                                ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=33) (actual time=0.001..0.001 rows=1 loops=722)
-                                      Index Cond: (id = variants.version_id)
-                                      Buffers: shared hit=2888
-                          ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.001..0.001 rows=1 loops=722)
-                                Index Cond: (id = versions.package_id)
-                                Buffers: shared hit=2888
-                    ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=722)
-                          Index Cond: (id = variants.meta_id)
-                          Buffers: shared hit=2888
-              ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=722)
-                    Index Cond: (seq = variants.commit_seq)
-                    Buffers: shared hit=2166
+Sort  (cost=1498.01..1498.33 rows=126 width=1389) (actual time=8.420..8.460 rows=746 loops=1)
+  Sort Key: versions.sort_key DESC, versions.version, versions.id, variants.system, variants.attr_path
+  Sort Method: quicksort  Memory: 576kB
+  Buffers: shared hit=15178
+  ->  Nested Loop  (cost=212.27..1493.61 rows=126 width=1389) (actual time=1.162..7.443 rows=746 loops=1)
+        Buffers: shared hit=15178
+        ->  Nested Loop  (cost=211.99..1456.12 rows=126 width=1334) (actual time=1.155..6.267 rows=746 loops=1)
+              Buffers: shared hit=12940
+              ->  Nested Loop  (cost=211.57..1390.92 rows=126 width=351) (actual time=1.148..5.111 rows=746 loops=1)
+                    Buffers: shared hit=9956
+                    ->  Nested Loop  (cost=211.15..1334.90 rows=126 width=328) (actual time=1.143..3.994 rows=746 loops=1)
+                          Buffers: shared hit=6972
+                          ->  Nested Loop  (cost=210.72..1275.94 rows=126 width=299) (actual time=1.137..2.736 rows=746 loops=1)
+                                Buffers: shared hit=3988
+                                ->  HashAggregate  (cost=210.29..211.55 rows=126 width=4) (actual time=1.129..1.271 rows=746 loops=1)
+                                      Group Key: va.id
+                                      Batches: 1  Memory Usage: 89kB
+                                      Buffers: shared hit=1004
+                                      ->  Append  (cost=1.28..209.98 rows=126 width=4) (actual time=0.033..0.949 rows=1012 loops=1)
+                                            Buffers: shared hit=1004
+                                            ->  Nested Loop  (cost=1.28..86.07 rows=15 width=4) (actual time=0.033..0.787 rows=746 loops=1)
+                                                  Buffers: shared hit=934
+                                                  ->  Nested Loop  (cost=0.85..76.81 rows=6 width=4) (actual time=0.025..0.103 rows=196 loops=1)
+                                                        Buffers: shared hit=28
+                                                        ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.013..0.014 rows=1 loops=1)
+                                                              Index Cond: (lower(name) = 'go'::text)
+                                                              Buffers: shared hit=4
+                                                        ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..68.04 rows=33 width=8) (actual time=0.009..0.063 rows=196 loops=1)
+                                                              Index Cond: (package_id = p.id)
+                                                              Buffers: shared hit=24
+                                                  ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.40 rows=14 width=8) (actual time=0.002..0.003 rows=4 loops=196)
+                                                        Index Cond: (version_id = ve.id)
+                                                        Buffers: shared hit=906
+                                            ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..123.28 rows=111 width=4) (actual time=0.007..0.084 rows=266 loops=1)
+                                                  Index Cond: (attr_path = 'go'::text)
+                                                  Buffers: shared hit=70
+                                ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=303) (actual time=0.002..0.002 rows=1 loops=746)
+                                      Index Cond: (id = va.id)
+                                      Buffers: shared hit=2984
+                          ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=33) (actual time=0.001..0.001 rows=1 loops=746)
+                                Index Cond: (id = variants.version_id)
+                                Buffers: shared hit=2984
+                    ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.001..0.001 rows=1 loops=746)
+                          Index Cond: (id = versions.package_id)
+                          Buffers: shared hit=2984
+              ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=746)
+                    Index Cond: (id = variants.meta_id)
+                    Buffers: shared hit=2984
+        ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=746)
+              Index Cond: (seq = variants.commit_seq)
+              Buffers: shared hit=2238
 Planning:
-  Buffers: shared hit=114
-Planning Time: 19.857 ms
-Execution Time: 8.774 ms
+  Buffers: shared hit=116
+Planning Time: 18.189 ms
+Execution Time: 8.677 ms
 ```
 
 ### every version — name=python
 
-Parameters: `["python"]` — Execution Time: 7.473 ms
+Parameters: `["python"]` — Execution Time: 7.771 ms
 
 ```
-Limit  (cost=1438.66..1438.97 rows=125 width=1384) (actual time=7.142..7.243 rows=648 loops=1)
-  Buffers: shared hit=13083
-  ->  Sort  (cost=1438.66..1438.97 rows=125 width=1384) (actual time=7.140..7.187 rows=648 loops=1)
-        Sort Key: versions.sort_key DESC, variants.system, variants.attr_path
-        Sort Method: quicksort  Memory: 1294kB
-        Buffers: shared hit=13083
-        ->  Nested Loop  (cost=164.40..1434.31 rows=125 width=1384) (actual time=0.847..6.409 rows=648 loops=1)
-              Buffers: shared hit=13083
-              ->  Nested Loop  (cost=164.12..1397.11 rows=125 width=1329) (actual time=0.842..5.390 rows=648 loops=1)
-                    Buffers: shared hit=11139
-                    ->  Nested Loop  (cost=163.70..1333.50 rows=125 width=346) (actual time=0.835..4.308 rows=648 loops=1)
-                          Buffers: shared hit=8547
-                          ->  Nested Loop  (cost=163.28..1277.92 rows=125 width=323) (actual time=0.830..3.294 rows=648 loops=1)
-                                Buffers: shared hit=5955
-                                ->  Nested Loop  (cost=162.85..1219.61 rows=125 width=298) (actual time=0.824..2.186 rows=648 loops=1)
-                                      Buffers: shared hit=3363
-                                      ->  HashAggregate  (cost=162.42..163.67 rows=125 width=4) (actual time=0.816..0.934 rows=648 loops=1)
-                                            Group Key: va.id
-                                            Batches: 1  Memory Usage: 89kB
-                                            Buffers: shared hit=771
-                                            ->  Append  (cost=1.28..162.11 rows=125 width=4) (actual time=0.028..0.690 rows=651 loops=1)
-                                                  Buffers: shared hit=771
-                                                  ->  Nested Loop  (cost=1.28..83.40 rows=16 width=4) (actual time=0.028..0.616 rows=648 loops=1)
-                                                        Buffers: shared hit=766
-                                                        ->  Nested Loop  (cost=0.85..74.94 rows=6 width=4) (actual time=0.022..0.092 rows=177 loops=1)
-                                                              Buffers: shared hit=23
-                                                              ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.013..0.013 rows=1 loops=1)
-                                                                    Index Cond: (lower(name) = 'python'::text)
-                                                                    Buffers: shared hit=4
-                                                              ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..66.18 rows=32 width=8) (actual time=0.007..0.055 rows=177 loops=1)
-                                                                    Index Cond: (package_id = p.id)
-                                                                    Buffers: shared hit=19
-                                                        ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.28 rows=13 width=8) (actual time=0.002..0.002 rows=4 loops=177)
-                                                              Index Cond: (version_id = ve.id)
-                                                              Buffers: shared hit=743
-                                                  ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..78.08 rows=109 width=4) (actual time=0.007..0.008 rows=3 loops=1)
-                                                        Index Cond: (attr_path = 'python'::text)
-                                                        Buffers: shared hit=5
-                                      ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=302) (actual time=0.002..0.002 rows=1 loops=648)
-                                            Index Cond: (id = va.id)
-                                            Buffers: shared hit=2592
-                                ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=33) (actual time=0.001..0.001 rows=1 loops=648)
-                                      Index Cond: (id = variants.version_id)
-                                      Buffers: shared hit=2592
-                          ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.001..0.001 rows=1 loops=648)
-                                Index Cond: (id = versions.package_id)
-                                Buffers: shared hit=2592
-                    ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=648)
-                          Index Cond: (id = variants.meta_id)
-                          Buffers: shared hit=2592
-              ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=648)
-                    Index Cond: (seq = variants.commit_seq)
-                    Buffers: shared hit=1944
+Sort  (cost=1498.01..1498.33 rows=126 width=1389) (actual time=7.509..7.546 rows=669 loops=1)
+  Sort Key: versions.sort_key DESC, versions.version, versions.id, variants.system, variants.attr_path
+  Sort Method: quicksort  Memory: 906kB
+  Buffers: shared hit=13525
+  ->  Nested Loop  (cost=212.27..1493.61 rows=126 width=1389) (actual time=0.898..6.540 rows=669 loops=1)
+        Buffers: shared hit=13525
+        ->  Nested Loop  (cost=211.99..1456.12 rows=126 width=1334) (actual time=0.892..5.574 rows=669 loops=1)
+              Buffers: shared hit=11518
+              ->  Nested Loop  (cost=211.57..1390.92 rows=126 width=351) (actual time=0.884..4.459 rows=669 loops=1)
+                    Buffers: shared hit=8842
+                    ->  Nested Loop  (cost=211.15..1334.90 rows=126 width=328) (actual time=0.878..3.466 rows=669 loops=1)
+                          Buffers: shared hit=6166
+                          ->  Nested Loop  (cost=210.72..1275.94 rows=126 width=299) (actual time=0.873..2.367 rows=669 loops=1)
+                                Buffers: shared hit=3490
+                                ->  HashAggregate  (cost=210.29..211.55 rows=126 width=4) (actual time=0.865..0.987 rows=669 loops=1)
+                                      Group Key: va.id
+                                      Batches: 1  Memory Usage: 89kB
+                                      Buffers: shared hit=814
+                                      ->  Append  (cost=1.28..209.98 rows=126 width=4) (actual time=0.033..0.732 rows=672 loops=1)
+                                            Buffers: shared hit=814
+                                            ->  Nested Loop  (cost=1.28..86.07 rows=15 width=4) (actual time=0.032..0.672 rows=669 loops=1)
+                                                  Buffers: shared hit=809
+                                                  ->  Nested Loop  (cost=0.85..76.81 rows=6 width=4) (actual time=0.024..0.104 rows=183 loops=1)
+                                                        Buffers: shared hit=30
+                                                        ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.014..0.015 rows=1 loops=1)
+                                                              Index Cond: (lower(name) = 'python'::text)
+                                                              Buffers: shared hit=4
+                                                        ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..68.04 rows=33 width=8) (actual time=0.007..0.063 rows=183 loops=1)
+                                                              Index Cond: (package_id = p.id)
+                                                              Buffers: shared hit=26
+                                                  ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.40 rows=14 width=8) (actual time=0.002..0.003 rows=4 loops=183)
+                                                        Index Cond: (version_id = ve.id)
+                                                        Buffers: shared hit=779
+                                            ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..123.28 rows=111 width=4) (actual time=0.007..0.008 rows=3 loops=1)
+                                                  Index Cond: (attr_path = 'python'::text)
+                                                  Buffers: shared hit=5
+                                ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=303) (actual time=0.002..0.002 rows=1 loops=669)
+                                      Index Cond: (id = va.id)
+                                      Buffers: shared hit=2676
+                          ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=33) (actual time=0.001..0.001 rows=1 loops=669)
+                                Index Cond: (id = variants.version_id)
+                                Buffers: shared hit=2676
+                    ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.001..0.001 rows=1 loops=669)
+                          Index Cond: (id = versions.package_id)
+                          Buffers: shared hit=2676
+              ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=669)
+                    Index Cond: (id = variants.meta_id)
+                    Buffers: shared hit=2676
+        ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=669)
+              Index Cond: (seq = variants.commit_seq)
+              Buffers: shared hit=2007
 Planning:
-  Buffers: shared hit=114
-Planning Time: 17.830 ms
-Execution Time: 7.473 ms
+  Buffers: shared hit=116
+Planning Time: 19.051 ms
+Execution Time: 7.771 ms
 ```
 
 ### every version — name=python311
 
-Parameters: `["python311"]` — Execution Time: 3.316 ms
+Parameters: `["python311"]` — Execution Time: 1.214 ms
 
 ```
-Limit  (cost=1438.66..1438.97 rows=125 width=1384) (actual time=3.172..3.187 rows=87 loops=1)
-  Buffers: shared hit=1668
-  ->  Sort  (cost=1438.66..1438.97 rows=125 width=1384) (actual time=3.171..3.178 rows=87 loops=1)
-        Sort Key: versions.sort_key DESC, variants.system, variants.attr_path
-        Sort Method: quicksort  Memory: 199kB
-        Buffers: shared hit=1668
-        ->  Nested Loop  (cost=164.40..1434.31 rows=125 width=1384) (actual time=0.126..0.975 rows=87 loops=1)
-              Buffers: shared hit=1668
-              ->  Nested Loop  (cost=164.12..1397.11 rows=125 width=1329) (actual time=0.121..0.803 rows=87 loops=1)
-                    Buffers: shared hit=1407
-                    ->  Nested Loop  (cost=163.70..1333.50 rows=125 width=346) (actual time=0.115..0.633 rows=87 loops=1)
-                          Buffers: shared hit=1059
-                          ->  Nested Loop  (cost=163.28..1277.92 rows=125 width=323) (actual time=0.107..0.484 rows=87 loops=1)
-                                Buffers: shared hit=711
-                                ->  Nested Loop  (cost=162.85..1219.61 rows=125 width=298) (actual time=0.099..0.314 rows=87 loops=1)
-                                      Buffers: shared hit=363
-                                      ->  HashAggregate  (cost=162.42..163.67 rows=125 width=4) (actual time=0.089..0.109 rows=87 loops=1)
-                                            Group Key: va.id
-                                            Batches: 1  Memory Usage: 40kB
-                                            Buffers: shared hit=15
-                                            ->  Append  (cost=1.28..162.11 rows=125 width=4) (actual time=0.024..0.073 rows=87 loops=1)
-                                                  Buffers: shared hit=15
-                                                  ->  Nested Loop  (cost=1.28..83.40 rows=16 width=4) (actual time=0.013..0.014 rows=0 loops=1)
+Sort  (cost=1498.01..1498.33 rows=126 width=1389) (actual time=1.107..1.113 rows=90 loops=1)
+  Sort Key: versions.sort_key DESC, versions.version, versions.id, variants.system, variants.attr_path
+  Sort Method: quicksort  Memory: 140kB
+  Buffers: shared hit=1728
+  ->  Nested Loop  (cost=212.27..1493.61 rows=126 width=1389) (actual time=0.120..0.872 rows=90 loops=1)
+        Buffers: shared hit=1728
+        ->  Nested Loop  (cost=211.99..1456.12 rows=126 width=1334) (actual time=0.114..0.728 rows=90 loops=1)
+              Buffers: shared hit=1458
+              ->  Nested Loop  (cost=211.57..1390.92 rows=126 width=351) (actual time=0.107..0.574 rows=90 loops=1)
+                    Buffers: shared hit=1098
+                    ->  Nested Loop  (cost=211.15..1334.90 rows=126 width=328) (actual time=0.101..0.436 rows=90 loops=1)
+                          Buffers: shared hit=738
+                          ->  Nested Loop  (cost=210.72..1275.94 rows=126 width=299) (actual time=0.094..0.281 rows=90 loops=1)
+                                Buffers: shared hit=378
+                                ->  HashAggregate  (cost=210.29..211.55 rows=126 width=4) (actual time=0.085..0.099 rows=90 loops=1)
+                                      Group Key: va.id
+                                      Batches: 1  Memory Usage: 40kB
+                                      Buffers: shared hit=18
+                                      ->  Append  (cost=1.28..209.98 rows=126 width=4) (actual time=0.023..0.067 rows=90 loops=1)
+                                            Buffers: shared hit=18
+                                            ->  Nested Loop  (cost=1.28..86.07 rows=15 width=4) (actual time=0.012..0.013 rows=0 loops=1)
+                                                  Buffers: shared hit=3
+                                                  ->  Nested Loop  (cost=0.85..76.81 rows=6 width=4) (actual time=0.012..0.013 rows=0 loops=1)
                                                         Buffers: shared hit=3
-                                                        ->  Nested Loop  (cost=0.85..74.94 rows=6 width=4) (actual time=0.013..0.014 rows=0 loops=1)
+                                                        ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.012..0.012 rows=0 loops=1)
+                                                              Index Cond: (lower(name) = 'python311'::text)
                                                               Buffers: shared hit=3
-                                                              ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.013..0.013 rows=0 loops=1)
-                                                                    Index Cond: (lower(name) = 'python311'::text)
-                                                                    Buffers: shared hit=3
-                                                              ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..66.18 rows=32 width=8) (never executed)
-                                                                    Index Cond: (package_id = p.id)
-                                                        ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.28 rows=13 width=8) (never executed)
-                                                              Index Cond: (version_id = ve.id)
-                                                  ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..78.08 rows=109 width=4) (actual time=0.010..0.051 rows=87 loops=1)
-                                                        Index Cond: (attr_path = 'python311'::text)
-                                                        Buffers: shared hit=12
-                                      ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=302) (actual time=0.002..0.002 rows=1 loops=87)
-                                            Index Cond: (id = va.id)
-                                            Buffers: shared hit=348
-                                ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=33) (actual time=0.002..0.002 rows=1 loops=87)
-                                      Index Cond: (id = variants.version_id)
-                                      Buffers: shared hit=348
-                          ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.001..0.001 rows=1 loops=87)
-                                Index Cond: (id = versions.package_id)
-                                Buffers: shared hit=348
-                    ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=87)
-                          Index Cond: (id = variants.meta_id)
-                          Buffers: shared hit=348
-              ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.002..0.002 rows=1 loops=87)
-                    Index Cond: (seq = variants.commit_seq)
-                    Buffers: shared hit=261
+                                                        ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..68.04 rows=33 width=8) (never executed)
+                                                              Index Cond: (package_id = p.id)
+                                                  ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.40 rows=14 width=8) (never executed)
+                                                        Index Cond: (version_id = ve.id)
+                                            ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..123.28 rows=111 width=4) (actual time=0.010..0.046 rows=90 loops=1)
+                                                  Index Cond: (attr_path = 'python311'::text)
+                                                  Buffers: shared hit=15
+                                ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=303) (actual time=0.002..0.002 rows=1 loops=90)
+                                      Index Cond: (id = va.id)
+                                      Buffers: shared hit=360
+                          ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=33) (actual time=0.001..0.001 rows=1 loops=90)
+                                Index Cond: (id = variants.version_id)
+                                Buffers: shared hit=360
+                    ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.001..0.001 rows=1 loops=90)
+                          Index Cond: (id = versions.package_id)
+                          Buffers: shared hit=360
+              ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (actual time=0.001..0.001 rows=1 loops=90)
+                    Index Cond: (id = variants.meta_id)
+                    Buffers: shared hit=360
+        ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.001..0.001 rows=1 loops=90)
+              Index Cond: (seq = variants.commit_seq)
+              Buffers: shared hit=270
 Planning:
-  Buffers: shared hit=114
-Planning Time: 19.440 ms
-Execution Time: 3.316 ms
+  Buffers: shared hit=116
+Planning Time: 17.031 ms
+Execution Time: 1.214 ms
 ```
 
 ### every version — name=hello
 
-Parameters: `["hello"]` — Execution Time: 0.403 ms
+Parameters: `["hello"]` — Execution Time: 0.405 ms
 
 ```
-Limit  (cost=1438.66..1438.97 rows=125 width=1384) (actual time=0.310..0.315 rows=19 loops=1)
-  Buffers: shared hit=401
-  ->  Sort  (cost=1438.66..1438.97 rows=125 width=1384) (actual time=0.309..0.312 rows=19 loops=1)
-        Sort Key: versions.sort_key DESC, variants.system, variants.attr_path
-        Sort Method: quicksort  Memory: 63kB
-        Buffers: shared hit=401
-        ->  Nested Loop  (cost=164.40..1434.31 rows=125 width=1384) (actual time=0.106..0.281 rows=19 loops=1)
-              Buffers: shared hit=401
-              ->  Nested Loop  (cost=164.12..1397.11 rows=125 width=1329) (actual time=0.101..0.235 rows=19 loops=1)
-                    Buffers: shared hit=344
-                    ->  Nested Loop  (cost=163.70..1333.50 rows=125 width=346) (actual time=0.095..0.197 rows=19 loops=1)
-                          Buffers: shared hit=268
-                          ->  Nested Loop  (cost=163.28..1277.92 rows=125 width=323) (actual time=0.090..0.164 rows=19 loops=1)
-                                Buffers: shared hit=192
-                                ->  Nested Loop  (cost=162.85..1219.61 rows=125 width=298) (actual time=0.085..0.128 rows=19 loops=1)
-                                      Buffers: shared hit=116
-                                      ->  HashAggregate  (cost=162.42..163.67 rows=125 width=4) (actual time=0.078..0.084 rows=19 loops=1)
-                                            Group Key: va.id
-                                            Batches: 1  Memory Usage: 40kB
-                                            Buffers: shared hit=40
-                                            ->  Append  (cost=1.28..162.11 rows=125 width=4) (actual time=0.032..0.068 rows=38 loops=1)
-                                                  Buffers: shared hit=40
-                                                  ->  Nested Loop  (cost=1.28..83.40 rows=16 width=4) (actual time=0.031..0.053 rows=19 loops=1)
-                                                        Buffers: shared hit=33
-                                                        ->  Nested Loop  (cost=0.85..74.94 rows=6 width=4) (actual time=0.025..0.027 rows=5 loops=1)
-                                                              Buffers: shared hit=8
-                                                              ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.015..0.015 rows=1 loops=1)
-                                                                    Index Cond: (lower(name) = 'hello'::text)
-                                                                    Buffers: shared hit=4
-                                                              ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..66.18 rows=32 width=8) (actual time=0.008..0.009 rows=5 loops=1)
-                                                                    Index Cond: (package_id = p.id)
-                                                                    Buffers: shared hit=4
-                                                        ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.28 rows=13 width=8) (actual time=0.003..0.004 rows=4 loops=5)
-                                                              Index Cond: (version_id = ve.id)
-                                                              Buffers: shared hit=25
-                                                  ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..78.08 rows=109 width=4) (actual time=0.006..0.011 rows=19 loops=1)
-                                                        Index Cond: (attr_path = 'hello'::text)
-                                                        Buffers: shared hit=7
-                                      ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=302) (actual time=0.002..0.002 rows=1 loops=19)
-                                            Index Cond: (id = va.id)
-                                            Buffers: shared hit=76
-                                ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=33) (actual time=0.001..0.001 rows=1 loops=19)
-                                      Index Cond: (id = variants.version_id)
+Sort  (cost=1498.01..1498.33 rows=126 width=1389) (actual time=0.314..0.317 rows=19 loops=1)
+  Sort Key: versions.sort_key DESC, versions.version, versions.id, variants.system, variants.attr_path
+  Sort Method: quicksort  Memory: 56kB
+  Buffers: shared hit=402
+  ->  Nested Loop  (cost=212.27..1493.61 rows=126 width=1389) (actual time=0.106..0.265 rows=19 loops=1)
+        Buffers: shared hit=402
+        ->  Nested Loop  (cost=211.99..1456.12 rows=126 width=1334) (actual time=0.101..0.227 rows=19 loops=1)
+              Buffers: shared hit=345
+              ->  Nested Loop  (cost=211.57..1390.92 rows=126 width=351) (actual time=0.093..0.189 rows=19 loops=1)
+                    Buffers: shared hit=269
+                    ->  Nested Loop  (cost=211.15..1334.90 rows=126 width=328) (actual time=0.089..0.155 rows=19 loops=1)
+                          Buffers: shared hit=193
+                          ->  Nested Loop  (cost=210.72..1275.94 rows=126 width=299) (actual time=0.083..0.119 rows=19 loops=1)
+                                Buffers: shared hit=117
+                                ->  HashAggregate  (cost=210.29..211.55 rows=126 width=4) (actual time=0.077..0.081 rows=19 loops=1)
+                                      Group Key: va.id
+                                      Batches: 1  Memory Usage: 40kB
+                                      Buffers: shared hit=41
+                                      ->  Append  (cost=1.28..209.98 rows=126 width=4) (actual time=0.028..0.066 rows=38 loops=1)
+                                            Buffers: shared hit=41
+                                            ->  Nested Loop  (cost=1.28..86.07 rows=15 width=4) (actual time=0.028..0.052 rows=19 loops=1)
+                                                  Buffers: shared hit=33
+                                                  ->  Nested Loop  (cost=0.85..76.81 rows=6 width=4) (actual time=0.022..0.024 rows=5 loops=1)
+                                                        Buffers: shared hit=8
+                                                        ->  Index Scan using packages_name_lower_idx on packages p  (cost=0.42..8.44 rows=1 width=4) (actual time=0.012..0.013 rows=1 loops=1)
+                                                              Index Cond: (lower(name) = 'hello'::text)
+                                                              Buffers: shared hit=4
+                                                        ->  Index Scan using versions_semver_idx on versions ve  (cost=0.43..68.04 rows=33 width=8) (actual time=0.007..0.008 rows=5 loops=1)
+                                                              Index Cond: (package_id = p.id)
+                                                              Buffers: shared hit=4
+                                                  ->  Index Scan using variants_identity_key on variants va  (cost=0.43..1.40 rows=14 width=8) (actual time=0.003..0.005 rows=4 loops=5)
+                                                        Index Cond: (version_id = ve.id)
+                                                        Buffers: shared hit=25
+                                            ->  Index Scan using variants_attr_path_idx on variants va_1  (cost=0.43..123.28 rows=111 width=4) (actual time=0.006..0.011 rows=19 loops=1)
+                                                  Index Cond: (attr_path = 'hello'::text)
+                                                  Buffers: shared hit=8
+                                ->  Index Scan using variants_pkey on variants  (cost=0.43..8.45 rows=1 width=303) (actual time=0.001..0.001 rows=1 loops=19)
+                                      Index Cond: (id = va.id)
                                       Buffers: shared hit=76
-                          ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.001..0.001 rows=1 loops=19)
-                                Index Cond: (id = versions.package_id)
+                          ->  Index Scan using versions_pkey on versions  (cost=0.43..0.47 rows=1 width=33) (actual time=0.001..0.001 rows=1 loops=19)
+                                Index Cond: (id = variants.version_id)
                                 Buffers: shared hit=76
-                    ->  Index Scan using meta_pkey on meta  (cost=0.42..0.51 rows=1 width=991) (actual time=0.002..0.002 rows=1 loops=19)
-                          Index Cond: (id = variants.meta_id)
+                    ->  Index Scan using packages_pkey on packages  (cost=0.42..0.44 rows=1 width=31) (actual time=0.001..0.001 rows=1 loops=19)
+                          Index Cond: (id = versions.package_id)
                           Buffers: shared hit=76
-              ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.002..0.002 rows=1 loops=19)
-                    Index Cond: (seq = variants.commit_seq)
-                    Buffers: shared hit=57
+              ->  Index Scan using meta_pkey on meta  (cost=0.42..0.52 rows=1 width=991) (actual time=0.002..0.002 rows=1 loops=19)
+                    Index Cond: (id = variants.meta_id)
+                    Buffers: shared hit=76
+        ->  Index Scan using commits_pkey on commits commit_hash  (cost=0.28..0.30 rows=1 width=53) (actual time=0.002..0.002 rows=1 loops=19)
+              Index Cond: (seq = variants.commit_seq)
+              Buffers: shared hit=57
 Planning:
-  Buffers: shared hit=114
-Planning Time: 17.474 ms
-Execution Time: 0.403 ms
+  Buffers: shared hit=116
+Planning Time: 17.566 ms
+Execution Time: 0.405 ms
 ```
 
