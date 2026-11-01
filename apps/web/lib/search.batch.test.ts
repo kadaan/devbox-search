@@ -157,16 +157,4 @@ describe("name lookups through the semi-join", () => {
     expect(rows).toHaveLength(130 * 2 * 4);
     expect([...new Set(rows.map((r) => r.version))]).toEqual(releases);
   });
-
-  test("the newest 1000 versions, each with every row", async () => {
-    const releases = Array.from({ length: 1001 }, (_, i) => `${1001 - i}.0.0`);
-    await seedPackage(t.db, {
-      name: "long-history",
-      versions: releases.map((version) => ({ version, systems: ["aarch64-darwin", "x86_64-linux"] })),
-    });
-
-    const rows = await search({ name: "long-history" });
-    expect(rows).toHaveLength(1000 * 2);
-    expect([...new Set(rows.map((r) => r.version))]).toEqual(releases.slice(0, 1000));
-  }, 120_000);
 });
