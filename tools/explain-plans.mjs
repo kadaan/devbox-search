@@ -129,8 +129,8 @@ inner join LATERAL (
   SELECT "versions"."id" AS version_id
   FROM "variants"
   JOIN "versions" ON "versions"."id" = "variants"."version_id"
-  WHERE "versions"."package_id" = hits.package_id AND "versions"."prerelease" = false
-  ORDER BY ${LATEST_ORDER}
+  WHERE "versions"."package_id" = hits.package_id
+  ORDER BY "versions"."prerelease", ${LATEST_ORDER}
   LIMIT 1
 ) AS latest on true
 inner join "variants" on "variants"."version_id" = latest.version_id

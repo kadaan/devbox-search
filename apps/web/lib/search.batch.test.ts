@@ -78,6 +78,16 @@ describe("searchByPhrase batched semantics match the per-hit lookups", () => {
     expect(rows.map((r) => r.version)).toContain("1.22.0");
   });
 
+  test("latest falls back to the newest prerelease when there is no release", async () => {
+    await seedPackage(t.db, { name: "rustfs", versions: [{ version: "1.0.0-rc.5" }, { version: "1.0.0-rc.6" }] });
+    await seedPackage(t.db, { name: "rustfs-cli", versions: [{ version: "0.9.0", broken: true }, { version: "1.0.0-rc.1" }] });
+
+    const rows = await search({ phrase: "rustfs", version: "latest" });
+    const versionByName = new Map(rows.map((r) => [r.name, r.version]));
+    expect(versionByName.get("rustfs")).toBe("1.0.0-rc.6");
+    expect(versionByName.get("rustfs-cli")).toBe("0.9.0");
+  });
+
   test("all versions: every version, newest first, one row each at the lowest system", async () => {
     await seedPackage(t.db, {
       name: "go",

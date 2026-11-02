@@ -228,8 +228,9 @@ paths:
         attributes outrank nested ones (`python3` above
         `emacsPackages.python`). Ties are broken by name.
 
-        Returns the latest non-prerelease release of each matching package,
-        at most 50 packages. An empty result set is a `200` with
+        Returns the release `latest` resolves to for each matching package,
+        a prerelease only when the package has no other release, at most 50
+        packages. An empty result set is a `200` with
         `total_results: 0`, not a `404`.
       x-example-requests:
         - summary: Search
@@ -669,7 +670,7 @@ components:
           description: Commit date of the package's latest release.
         version:
           type: string
-          description: The latest non-prerelease version (what `?version=latest` would resolve to).
+          description: The version `?version=latest` resolves to; a prerelease only when the package has no other version.
         attribute_path:
           type: string
           description: The (alphabetically first) nixpkgs attribute path serving that version.
@@ -729,7 +730,7 @@ components:
           description: Display string such as `out, debug (Linux only)`; empty when every output is installed by default.
         prerelease:
           type: boolean
-          description: Whether the version is a prerelease (`3.14.0rc1`). `latest` never picks one.
+          description: Whether the version is a prerelease (`3.14.0rc1`). `latest` picks one only when a package has no other version.
         broken:
           type: boolean
           description: |
