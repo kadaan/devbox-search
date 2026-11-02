@@ -672,8 +672,9 @@ export async function searchByPhrase(q: SearchQuery): Promise<ResultPackage[]> {
     WITH ORDINALITY AS hits(package_id, ord)`;
 
   if (latestOnly) {
-    // Per package, the non-prerelease version pickLatestVersionId would
-    // choose: the same ordering (latestOrder) over the package's variants.
+    // Per package, the version resolve() picks at `latest`: the same ordering
+    // (latestOrder) over the package's variants, with prereleases only when
+    // the package has nothing else.
     const rows = await db()
       .selectDistinctOn([sql`hits.ord`], { ...resultColumns, versionSystems })
       .from(hits)
@@ -682,8 +683,8 @@ export async function searchByPhrase(q: SearchQuery): Promise<ResultPackage[]> {
           SELECT ${versions.id} AS version_id
           FROM ${variants}
           JOIN ${versions} ON ${versions.id} = ${variants.versionId}
-          WHERE ${versions.packageId} = hits.package_id AND ${versions.prerelease} = false
-          ORDER BY ${sql.join(latestOrder(undefined), sql`, `)}
+          WHERE ${versions.packageId} = hits.package_id
+          ORDER BY ${versions.prerelease}, ${sql.join(latestOrder(undefined), sql`, `)}
           LIMIT 1
         ) AS latest`,
         sql`true`,

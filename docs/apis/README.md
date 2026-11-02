@@ -459,8 +459,9 @@ attribute-path prefix, then trigram similarity; top-level nixpkgs
 attributes outrank nested ones (`python3` above
 `emacsPackages.python`). Ties are broken by name.
 
-Returns the latest non-prerelease release of each matching package,
-at most 50 packages. An empty result set is a `200` with
+Returns the release `latest` resolves to for each matching package,
+a prerelease only when the package has no other release, at most 50
+packages. An empty result set is a `200` with
 `total_results: 0`, not a `404`.
 
 Methods: `GET`, `HEAD`, `OPTIONS`
@@ -1464,7 +1465,7 @@ One matching package, at the release `latest` resolves to.
 | `name` | string | yes |  |
 | `summary` | string | yes |  |
 | `last_updated` | string (RFC 3339) | yes | Commit date of the package's latest release. |
-| `version` | string | yes | The latest non-prerelease version (what `?version=latest` would resolve to). |
+| `version` | string | yes | The version `?version=latest` resolves to; a prerelease only when the package has no other version. |
 | `attribute_path` | string | yes | The (alphabetically first) nixpkgs attribute path serving that version. |
 | `systems` | array of string | yes | Systems that version exists on, sorted. |
 
@@ -1489,7 +1490,7 @@ One matching package, at the release `latest` resolves to.
 | `platforms` | array of [V2Platform](#v2platform) | yes | One entry per system (a system with several attribute paths is listed once). |
 | `platforms_summary` | string | yes | Display string such as `Linux and macOS (Apple Silicon only)`; empty when no supported platform is present. |
 | `outputs_summary` | string | yes | Display string such as `out, debug (Linux only)`; empty when every output is installed by default. |
-| `prerelease` | boolean | yes | Whether the version is a prerelease (`3.14.0rc1`). `latest` never picks one. |
+| `prerelease` | boolean | yes | Whether the version is a prerelease (`3.14.0rc1`). `latest` picks one only when a package has no other version. |
 | `broken` | boolean | yes | Whether `meta.broken` is set on *every* platform in `platforms`. A version still usable somewhere is not a broken release; the per-platform flags say where. |
 | `insecure` | boolean | yes | As `broken`, for `meta.insecure`. |
 
