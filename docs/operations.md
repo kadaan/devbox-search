@@ -40,6 +40,47 @@ gh workflow run index.yml -f limit=15
   import's 120-minute timeout.
 - Back-to-back dispatches queue rather than overlap.
 
+### Backfilling history the eval could not see
+
+The importer only appends commits newer than the head, so when `eval.nix`
+starts listing something it missed before, the new rows exist from that
+import on and older versions don't resolve. `backfill.yml` fills in history
+for the versions `eval.nix` passes in `meta._devboxSearchVersion`: it
+re-evaluates commits that were already imported with
+`eval.nix --arg hiddenOnly true` (just those ~200 derivations, ~15 s per
+system) and writes their variants and presence ranges in one transaction.
+
+```sh
+gh workflow run backfill.yml -f since=2025-10-01 -f through_seq=<seq>   # dry run
+gh workflow run backfill.yml -f since=2025-10-01 -f through_seq=<seq> -f dry_run=false
+```
+
+- `through_seq` is the last seq imported before the eval change, i.e. one
+  less than the first live range of a package that has one only because
+  of it (the workflow header has the query). A window that reaches into
+  commits already imported with those rows is refused, not merged.
+- A failed fetch or eval fails its batch, and the import then refuses to
+  write anything: a missing eval is bridged, which can leave a range too
+  long (across a commit the package was absent from) or not joined to the
+  forward import's. Re-run the failed jobs, or the workflow. The CLI makes
+  the same check per commit and system, so a hand-run `cli.js backfill`
+  refuses too.
+- `-f allow_failed_evals=true` (`--allow-failed-evals`) imports anyway. A
+  later run of the same window with every eval repairs what it wrote: ranges
+  a backfill wrote are marked (`variant_ranges.backfill_last_seq`), and
+  within the window a rerun's evals replace them. The forward import's
+  ranges are never replaced; overlapping one is still refused.
+- An archive outside the window (before `since`, or a system not in the
+  list) is refused even with the override, so a reused `--dir` can't widen
+  a hand run. A seed-era point range inside a backfilled range is replaced
+  by it, and unchanged content is dated from the earliest commit the
+  backfill saw it at.
+- Re-running the same window with the same evals writes nothing. Re-run
+  with the same `since` and `through_seq` as before: once a backfill has
+  extended the live ranges, the header's `through_seq` query no longer gives
+  the original value.
+- A year is ~377 commits: 38 batches of 10, ~10 min each, 20 at a time.
+
 ### Reading the numbers
 
 - `commits.committed_at` is the **nixpkgs commit date**, not when the row
