@@ -82,6 +82,8 @@ export interface ResultPackage {
   versionSystems?: string[];
   /** Set only when the query asked for `releases`. */
   releases?: Array<{ version: string; systems: string[] }>;
+  /** Set only when the query asked for `releases`. */
+  releaseCount?: number;
 }
 
 /**
@@ -494,6 +496,20 @@ function newestReleases(count: number | "all"): SQL<ResultPackage["releases"]> {
 }
 
 /**
+ * How many of a phrase hit's releases have a version, for /v2/search's
+ * `release_count`. Counts the set newestReleases draws from, minus empty
+ * versions: a client compares it with what it shows to tell whether
+ * `releases` hid any it could display.
+ */
+const releaseCount = sql<number>`(
+  SELECT count(*)::int
+  FROM ${versions}
+  WHERE ${versions.packageId} = hits.package_id
+    AND ${versions.version} <> ''
+    AND EXISTS (SELECT 1 FROM ${variants} va WHERE va.version_id = ${versions.id})
+)`;
+
+/**
  * Full-text search over names and attribute paths.
  *
  * Replaces FTS5 bm25 (with its 10x top-level-attr weighting) with tiered
@@ -718,7 +734,7 @@ export async function searchByPhrase(q: SearchQuery): Promise<ResultPackage[]> {
       .selectDistinctOn([sql`hits.ord`], {
         ...resultColumns,
         versionSystems,
-        ...(q.releases === undefined ? {} : { releases: newestReleases(q.releases) }),
+        ...(q.releases === undefined ? {} : { releases: newestReleases(q.releases), releaseCount }),
       })
       .from(hits)
       .innerJoin(

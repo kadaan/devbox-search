@@ -466,7 +466,8 @@ packages. An empty result set is a `200` with
 
 With `releases`, each result also lists the package's newest
 releases and the systems each exists on, so one request covers what
-would otherwise take a `/v2/pkg` call per result.
+would otherwise take a `/v2/pkg` call per result, and counts its
+releases in `release_count`.
 
 Methods: `GET`, `HEAD`, `OPTIONS`
 
@@ -543,7 +544,7 @@ GET /v2/search?q=go&releases=2
 HTTP/1.1 200
 Content-Type: application/json
 Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400
-ETag: "h2p8ZGig_uX2tLiiBAzenJwzBlg"
+ETag: "zopGWZMf1Q668eu_myak7AQeb7y"
 
 {
   "query": "go",
@@ -574,7 +575,8 @@ ETag: "h2p8ZGig_uX2tLiiBAzenJwzBlg"
             "x86_64-linux"
           ]
         }
-      ]
+      ],
+      "release_count": 2
     },
     {
       "name": "go-task",
@@ -594,7 +596,8 @@ ETag: "h2p8ZGig_uX2tLiiBAzenJwzBlg"
             "x86_64-linux"
           ]
         }
-      ]
+      ],
+      "release_count": 1
     }
   ]
 }
@@ -1544,6 +1547,7 @@ One matching package, at the release `latest` resolves to.
 | `attribute_path` | string | yes | The (alphabetically first) nixpkgs attribute path serving that version. |
 | `systems` | array of string | yes | Systems that version exists on, sorted. |
 | `releases` | array of [V2SearchRelease](#v2searchrelease) | no | Only with `?releases=`. The package's newest releases, newest first, in the same order as `/v2/pkg`'s `releases`, so `releases=n` is the first `n` of that list. `/v2/pkg` looks a package up by name or attribute path, so this holds as long as that lookup finds just this package. Like `/v2/pkg`, this lists every release, including prereleases and broken ones, so `releases[0]` is not necessarily `version`: a package whose newest release is `23.0.0-rc.1` lists that first while `version` is the `latest` pick, `22.0.0`. |
+| `release_count` | integer | no | Only with `?releases=`. How many of the package's releases have a version, however many `releases` asked for. When it exceeds the number of non-empty versions in `releases`, the limit left some out. A release with an empty `version` is listed in `releases` and `/v2/pkg` but not counted, since no version can select it. A package whose only releases have empty versions has a count of `0` and still resolves at `latest`. |
 
 ### V2SearchRelease
 

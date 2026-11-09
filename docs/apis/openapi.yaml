@@ -235,7 +235,8 @@ paths:
 
         With `releases`, each result also lists the package's newest
         releases and the systems each exists on, so one request covers what
-        would otherwise take a `/v2/pkg` call per result.
+        would otherwise take a `/v2/pkg` call per result, and counts its
+        releases in `release_count`.
       x-example-requests:
         - summary: Search
           path: /v2/search?q=go
@@ -714,6 +715,19 @@ components:
             while `version` is the `latest` pick, `22.0.0`.
           items:
             $ref: "#/components/schemas/V2SearchRelease"
+        release_count:
+          type: integer
+          minimum: 0
+          description: |
+            Only with `?releases=`. How many of the package's releases have
+            a version, however many `releases` asked for. When it exceeds
+            the number of non-empty versions in `releases`, the limit left
+            some out.
+
+            A release with an empty `version` is listed in `releases` and
+            `/v2/pkg` but not counted, since no version can select it. A
+            package whose only releases have empty versions has a count of
+            `0` and still resolves at `latest`.
 
     V2SearchRelease:
       type: object

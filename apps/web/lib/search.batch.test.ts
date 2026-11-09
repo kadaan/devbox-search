@@ -194,6 +194,29 @@ describe("/v2/search releases", () => {
   test("absent: the response is unchanged", async () => {
     const { body } = await get("q=nodejs");
     expect(body.results[0]).not.toHaveProperty("releases");
+    expect(body.results[0]).not.toHaveProperty("release_count");
+  });
+
+  test("release_count counts every release with a version, whatever n is", async () => {
+    await seedPackage(t.db, {
+      name: "tool",
+      versions: [{ version: "2.0.0" }, { version: "" }, { version: "1.0.0" }, { version: "0.9.0" }],
+    });
+    for (const n of [1, 2, "all"] as const) {
+      const { body } = await get(`q=tool&releases=${n}`);
+      const tool = body.results.find((r: { name: string }) => r.name === "tool");
+      expect(tool.release_count, `releases=${n}`).toBe(3);
+    }
+
+    const { body } = await get("q=nodejs&releases=1");
+    expect(body.results.map((r: { release_count: number }) => r.release_count)).toEqual([4, 1]);
+  });
+
+  test("release_count is 0 when no release has a version", async () => {
+    await seedPackage(t.db, { name: "x11", versions: [{ version: "" }] });
+    const { body } = await get("q=x11&releases=all");
+    expect(body.results[0].releases).toEqual([{ version: "", systems: expect.any(Array) }]);
+    expect(body.results[0].release_count).toBe(0);
   });
 
   test("all: every release newest first, each system once across attribute paths", async () => {

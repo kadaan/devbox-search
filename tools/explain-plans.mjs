@@ -138,7 +138,7 @@ ${RESULT_JOINS}
 order by hits.ord, "variants"."system" asc, "variants"."attr_path" asc
 limit 50`;
 
-/** As PHRASE_LATEST, with /v2/search's releases=11. */
+/** As PHRASE_LATEST, with /v2/search's releases=11 and release_count. */
 const PHRASE_LATEST_RELEASES = `
 select distinct on (hits.ord) ${RESULT_COLUMNS}, (
   SELECT coalesce(json_agg(json_build_object(
@@ -153,7 +153,13 @@ select distinct on (hits.ord) ${RESULT_COLUMNS}, (
     ORDER BY "versions"."sort_key" DESC, "versions"."version" ASC, "versions"."id" ASC
     LIMIT 11
   ) AS r
-) AS releases
+) AS releases, (
+  SELECT count(*)::int
+  FROM "versions"
+  WHERE "versions"."package_id" = hits.package_id
+    AND "versions"."version" <> ''
+    AND EXISTS (SELECT 1 FROM "variants" va WHERE va.version_id = "versions"."id")
+) AS release_count
 from unnest(string_to_array($1, ',')::int[]) WITH ORDINALITY AS hits(package_id, ord)
 inner join LATERAL (
   SELECT "versions"."id" AS version_id
